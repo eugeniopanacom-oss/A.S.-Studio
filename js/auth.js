@@ -298,6 +298,12 @@ async function signInWithGoogle(context) {
 let recaptchaVerifier;
 let confirmationResult;
 
+// Configurar la fecha actual en el footer
+const currentYear = new Date().getFullYear();
+if (document.getElementById('current-year')) {
+    document.getElementById('current-year').textContent = currentYear;
+}
+
 function initializeRecaptcha() {
     // Solo inicializar cuando sea necesario
     recaptchaVerifier = new firebase.auth.RecaptchaVerifier('send-otp', {
