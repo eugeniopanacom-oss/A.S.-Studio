@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A.S. Studio - Mi Perfil</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+</head>
+<body id="user-body">
+    <div class="admin-container">
+        <!-- Barra lateral de navegación -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2><i class="fas fa-cut"></i> A.S. Studio</h2>
+                <p>Panel de Usuario</p>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <h3 id="user-name">Usuario</h3>
+                    <p id="user-email">usuario@email.com</p>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li><a href="#" class="nav-link active" data-section="profile"><i class="fas fa-user-circle"></i> Mi Perfil</a></li>
+                <li><a href="#" class="nav-link" data-section="appointments"><i class="fas fa-calendar-alt"></i> Mis Reservas</a></li>
+                <li><a href="#" class="nav-link" data-section="new-appointment"><i class="fas fa-plus-circle"></i> Nueva Reserva</a></li>
+                <li><a href="#" class="nav-link" data-section="history"><i class="fas fa-history"></i> Historial</a></li>
+            </ul>
+            
+            <div class="logout-section">
+                <button id="logout-btn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Contenido principal -->
+        <main class="admin-content">
+            <header class="content-header">
+                <h1 id="section-title">Mi Perfil</h1>
+                <div class="header-actions">
+                    <div class="date-display">
+                        <i class="fas fa-calendar-day"></i>
+                        <span id="current-date"></span>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Sección Perfil -->
+            <section id="profile-section" class="content-section active">
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <h2><i class="fas fa-user"></i> Información Personal</h2>
+                        
+                        <div class="profile-info">
+                            <div class="info-item">
+                                <label>Nombre completo:</label>
+                                <p id="profile-name">Cargando...</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label>Correo electrónico:</label>
+                                <p id="profile-email">Cargando...</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label>Teléfono:</label>
+                                <p id="profile-phone">Cargando...</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label>Fecha de registro:</label>
+                                <p id="profile-joined">Cargando...</p>
+                            </div>
+                            
+                            <div class="info-item">
+                                <label>Reservas totales:</label>
+                                <p id="profile-total-appointments">Cargando...</p>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-actions">
+                            <button id="edit-profile-btn" class="btn-primary">
+                                <i class="fas fa-edit"></i> Editar Perfil
+                            </button>
+                            <button id="change-password-btn" class="btn-secondary">
+                                <i class="fas fa-key"></i> Cambiar Contraseña
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-card">
+                        <h2><i class="fas fa-star"></i> Preferencias</h2>
+                        
+                        <div class="preferences">
+                            <div class="preference-item">
+                                <h4>Barbero preferido</h4>
+                                <select id="preferred-barber">
+                                    <option value="">Sin preferencia</option>
+                                    <option value="juan">Juan Pérez</option>
+                                    <option value="carlos">Carlos Gómez</option>
+                                    <option value="miguel">Miguel Rodríguez</option>
+                                </select>
+                            </div>
+                            
+                            <div class="preference-item">
+                                <h4>Servicio preferido</h4>
+                                <select id="preferred-service">
+                                    <option value="">Sin preferencia</option>
+                                    <option value="corte">Corte de cabello</option>
+                                    <option value="barba">Arreglo de barba</option>
+                                    <option value="combo">Corte + Barba</option>
+                                    <option value="tinte">Tinte de cabello</option>
+                                </select>
+                            </div>
+                            
+                            <div class="preference-item">
+                                <h4>Notificaciones</h4>
+                                <div class="checkbox-group">
+                                    <label>
+                                        <input type="checkbox" id="notify-email" checked>
+                                        <span>Recordatorios por email</span>
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" id="notify-sms" checked>
+                                        <span>Recordatorios por SMS</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button id="save-preferences" class="btn-primary">
+                                <i class="fas fa-save"></i> Guardar Preferencias
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Sección Mis Reservas -->
+            <section id="appointments-section" class="content-section">
+                <div class="section-header">
+                    <h2>Mis Reservas</h2>
+                    <div class="section-actions">
+                        <button id="filter-upcoming" class="btn-filter active">Próximas</button>
+                        <button id="filter-past" class="btn-filter">Pasadas</button>
+                        <button id="filter-all-user" class="btn-filter">Todas</button>
+                    </div>
+                </div>
+                
+                <div id="user-appointments">
+                    <!-- Las reservas se cargarán aquí -->
+                    <div class="loading">Cargando reservas...</div>
+                </div>
+            </section>
+            
+            <!-- Sección Nueva Reserva -->
+            <section id="new-appointment-section" class="content-section">
+                <div class="section-header">
+                    <h2>Nueva Reserva</h2>
+                    <p>Selecciona fecha, hora y servicio para tu próxima cita</p>
+                </div>
+                
+                <div class="new-appointment-container">
+                    <form id="new-appointment-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="new-appointment-date">Fecha *</label>
+                                <input type="date" id="new-appointment-date" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="new-appointment-time">Hora *</label>
+                                <select id="new-appointment-time" required>
+                                    <option value="">Seleccionar hora</option>
+                                    <!-- Las horas disponibles se cargarán dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="new-appointment-service">Servicio *</label>
+                                <select id="new-appointment-service" required>
+                                    <option value="">Seleccionar servicio</option>
+                                    <option value="corte">Corte de cabello - $15</option>
+                                    <option value="barba">Arreglo de barba - $10</option>
+                                    <option value="combo">Corte + Barba - $20</option>
+                                    <option value="tinte">Tinte de cabello - $25</option>
+                                    <option value="facial">Tratamiento facial - $30</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="new-appointment-barber">Barbero</label>
+                                <select id="new-appointment-barber">
+                                    <option value="">Cualquier barbero disponible</option>
+                                    <option value="juan">Juan Pérez</option>
+                                    <option value="carlos">Carlos Gómez</option>
+                                    <option value="miguel">Miguel Rodríguez</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="new-appointment-notes">Notas adicionales</label>
+                            <textarea id="new-appointment-notes" rows="3" placeholder="Especificaciones especiales, preferencias, etc."></textarea>
+                        </div>
+                        
+                        <div class="form-summary">
+                            <h3>Resumen de la reserva</h3>
+                            <div class="summary-details">
+                                <div class="summary-item">
+                                    <span>Fecha:</span>
+                                    <span id="summary-date">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Hora:</span>
+                                    <span id="summary-time">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Servicio:</span>
+                                    <span id="summary-service">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span>Barbero:</span>
+                                    <span id="summary-barber">Cualquiera</span>
+                                </div>
+                                <div class="summary-item total">
+                                    <span>Total:</span>
+                                    <span id="summary-total">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="reset" class="btn-secondary">Cancelar</button>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-calendar-check"></i> Confirmar Reserva
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- Sección Historial -->
+            <section id="history-section" class="content-section">
+                <div class="section-header">
+                    <h2>Historial de Reservas</h2>
+                    <p>Todas tus reservas anteriores en A.S. Studio</p>
+                </div>
+                
+                <div class="table-container">
+                    <table id="history-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Servicio</th>
+                                <th>Barbero</th>
+                                <th>Estado</th>
+                                <th>Precio</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- El historial se cargará aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <!-- Modal para editar perfil -->
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Editar Perfil</h3>
+            <form id="edit-profile-form">
+                <div class="form-group">
+                    <label for="edit-name">Nombre completo *</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-phone">Teléfono *</label>
+                    <input type="tel" id="edit-phone" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-edit">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para cambiar contraseña -->
+    <div id="change-password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Cambiar Contraseña</h3>
+            <form id="change-password-form">
+                <div class="form-group">
+                    <label for="current-password">Contraseña actual *</label>
+                    <input type="password" id="current-password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-password">Nueva contraseña *</label>
+                    <input type="password" id="new-password" required>
+                    <small>Mínimo 6 caracteres</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirmar nueva contraseña *</label>
+                    <input type="password" id="confirm-password" required>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancel-password">Cancelar</button>
+                    <button type="submit" class="btn-primary">Cambiar Contraseña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para confirmación de reserva -->
+    <div id="confirm-appointment-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>Confirmar Reserva</h3>
+            <div id="appointment-confirmation-details">
+                <!-- Los detalles de la reserva se mostrarán aquí -->
+            </div>
+            <div class="modal-actions">
+                <button id="cancel-confirmation" class="btn-secondary">Cancelar</button>
+                <button id="confirm-reservation" class="btn-primary">Confirmar Reserva</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/firebase-config.js"></script>
+    <script src="js/user.js"></script>
+</body>
+</html>
