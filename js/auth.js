@@ -1,45 +1,15 @@
-// auth.js - VERSIÓN CORREGIDA (sin autorefresh)
-console.log("🔐 auth.js cargado - versión corregida");
-
+// Referencias a elementos del DOM
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("📄 DOM cargado, configurando eventos...");
-    
     // Establecer año actual
     document.getElementById('current-year').textContent = new Date().getFullYear();
     
-    // Referencias a formularios y botones
+    // Referencias a pestañas y formularios
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     const phoneAuthForm = document.getElementById('phone-auth-form');
     
-    // PREVENIR SUBMIT EN TODOS LOS FORMULARIOS
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            console.log("🛑 Submit prevenido en login-form");
-            e.preventDefault();
-            return false;
-        });
-    }
-    
-    if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
-            console.log("🛑 Submit prevenido en register-form");
-            e.preventDefault();
-            return false;
-        });
-    }
-    
-    if (phoneAuthForm) {
-        phoneAuthForm.addEventListener('submit', function(e) {
-            console.log("🛑 Submit prevenido en phone-auth-form");
-            e.preventDefault();
-            return false;
-        });
-    }
-    
-    // Referencias a pestañas
-    const loginTab = document.getElementById('login-tab');
-    const registerTab = document.getElementById('register-tab');
     const goToRegister = document.getElementById('go-to-register');
     const goToLogin = document.getElementById('go-to-login');
     const phoneAuthTrigger = document.getElementById('phone-auth-trigger');
@@ -53,14 +23,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const googleRegisterBtn = document.getElementById('google-register');
     const sendOtpBtn = document.getElementById('send-otp');
     const verifyOtpBtn = document.getElementById('verify-otp');
+    const phoneNumberInput = document.getElementById('phone-number');
+    const otpCodeInput = document.getElementById('otp-code');
+    const otpSection = document.getElementById('otp-section');
+    const countryCodeSelect = document.getElementById('country-code');
     
-    // Cambiar tipo de botones de submit a button
-    if (loginBtn) loginBtn.type = 'button';
-    if (registerBtn) registerBtn.type = 'button';
-    if (sendOtpBtn) sendOtpBtn.type = 'button';
-    if (verifyOtpBtn) verifyOtpBtn.type = 'button';
-    
-    console.log("✅ Tipos de botones cambiados a 'button'");
+    // Referencias a campos de formulario
+    const loginEmail = document.getElementById('login-email');
+    const loginPassword = document.getElementById('login-password');
+    const registerName = document.getElementById('register-name');
+    const registerEmail = document.getElementById('register-email');
+    const registerPhone = document.getElementById('register-phone');
+    const registerPassword = document.getElementById('register-password');
+    const registerPasswordConfirm = document.getElementById('register-password-confirm');
     
     // Cargar fondo de pantalla
     loadBackgroundImage('main');
@@ -80,18 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         switchAuthForm('register');
     });
-    
-    if (goToLogin) goToLogin.addEventListener('click', (e) => {
-        e.preventDefault();
-        switchAuthForm('login');
-    });
-    
-    if (phoneAuthTrigger) phoneAuthTrigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        switchAuthForm('phone');
-    });
-    
-    if (backToLogin) backToLogin.addEventListener('click', (e) => {
+    goToLogin.addEventListener('click', (e) => {
         e.preventDefault();
         switchAuthForm('login');
     });
