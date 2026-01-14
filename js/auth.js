@@ -211,12 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error("❌ auth no está definido");
     }
-    
-    // Configurar Recaptcha para autenticación telefónica
-    if (typeof firebase !== 'undefined') {
-        renderRecaptcha();
-    }
-    
+        
     console.log("✅ Todos los eventos configurados correctamente");
 });
 
@@ -573,30 +568,6 @@ async function registerWithEmail() {
 // Configurar Recaptcha para autenticación telefónica
 let recaptchaVerifier;
 let confirmationResult;
-
-function renderRecaptcha() {
-    // VERIFICA que auth existe
-    if (!window.auth) {
-        console.error('Auth no está disponible para recaptcha');
-        return null;
-    }
-    
-    try {
-        const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-            'size': 'normal',
-            'callback': function(response) {
-                console.log('reCAPTCHA verificado');
-            },
-            'expired-callback': function() {
-                console.log('reCAPTCHA expirado');
-            }
-        });
-        return recaptchaVerifier;
-    } catch (error) {
-        console.error('Error al crear recaptcha:', error);
-        return null;
-    }
-}
 
 // Función para mostrar notificaciones
 function showNotification(title, message) {
