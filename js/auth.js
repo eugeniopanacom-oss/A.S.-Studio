@@ -169,6 +169,51 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Autenticación con Google
+    async function signInWithGoogle() {
+    const googleBtn = document.getElementById('google-signin-btn');
+    
+    if (googleBtn) showLoading(googleBtn);
+    
+    try {
+        console.log('🔐 Iniciando sesión con Google...');
+        
+        if (!window.auth) {
+            throw new Error('Firebase Auth no disponible');
+        }
+        
+        // Necesitas agregar el provider de Google
+        const provider = new firebase.auth.GoogleAuthProvider();
+        
+        // Configurar scopes opcionales
+        provider.addScope('email');
+        provider.addScope('profile');
+        
+        const result = await auth.signInWithPopup(provider);
+        
+        // Guardar usuario en Firestore si es nuevo
+        if (result.additionalUserInfo.isNewUser && window.db) {
+            await db.collection('users').doc(result.user.uid).set({
+                email: result.user.email,
+                displayName: result.user.displayName,
+                photoURL: result.user.photoURL,
+                provider: 'google',
+                createdAt: new Date(),
+                role: 'user'
+            });
+        }
+        
+        showNotification('Sesión con Google exitosa', 'success');
+        setTimeout(() => {
+            window.location.href = 'user.html';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('❌ Error con Google Sign-In:', error);
+        showNotification('Error con Google: ' + error.message, 'error');
+    } finally {
+        if (googleBtn) hideLoading(googleBtn);
+    }
+}
     if (googleLoginBtn) googleLoginBtn.addEventListener('click', (e) => {
         e.preventDefault();
         signInWithGoogle('login');
