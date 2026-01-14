@@ -1,3 +1,49 @@
+// FUNCIONES DE UTILIDAD QUE FALTAN
+function showLoading(button) {
+    if (button) {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="spinner"></span> Procesando...';
+        button.disabled = true;
+        button.dataset.originalText = originalText;
+    }
+}
+
+function hideLoading(button) {
+    if (button && button.dataset.originalText) {
+        button.innerHTML = button.dataset.originalText;
+        button.disabled = false;
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Crea una notificación básica si no tienes sistema
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px;
+        background: ${type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#2196F3'};
+        color: white;
+        border-radius: 5px;
+        z-index: 1000;
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+}
+
+// VARIABLES GLOBALES QUE FALTAN
+let registerBtn = document.getElementById('register-btn');
+let loginBtn = document.getElementById('login-btn');
+let logoutBtn = document.getElementById('logout-btn');
+
+// Si no existen, créalos de forma segura
+if (!registerBtn) console.warn('register-btn no encontrado');
+if (!loginBtn) console.warn('login-btn no encontrado');
+if (!logoutBtn) console.warn('logout-btn no encontrado');
+
 // Referencias a elementos del DOM
 document.addEventListener('DOMContentLoaded', function() {
     // Establecer año actual
@@ -344,25 +390,26 @@ let recaptchaVerifier;
 let confirmationResult;
 
 function renderRecaptcha() {
-    if (typeof firebase === 'undefined') {
-        console.error("❌ Firebase no está disponible para recaptcha");
-        return;
+    // VERIFICA que auth existe
+    if (!window.auth) {
+        console.error('Auth no está disponible para recaptcha');
+        return null;
     }
     
     try {
-        recaptchaVerifier = new firebase.auth.RecaptchaVerifier('send-otp', {
-            'size': 'invisible',
+        const recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+            'size': 'normal',
             'callback': function(response) {
-                console.log("✅ reCAPTCHA resuelto");
-                sendOtp();
+                console.log('reCAPTCHA verificado');
+            },
+            'expired-callback': function() {
+                console.log('reCAPTCHA expirado');
             }
         });
-        
-        recaptchaVerifier.render().then(() => {
-            console.log("✅ reCAPTCHA renderizado");
-        });
+        return recaptchaVerifier;
     } catch (error) {
-        console.error("❌ Error al renderizar recaptcha:", error);
+        console.error('Error al crear recaptcha:', error);
+        return null;
     }
 }
 
