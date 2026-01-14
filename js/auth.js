@@ -34,6 +34,30 @@ function showNotification(message, type = 'info') {
     setTimeout(() => notification.remove(), 5000);
 }
 
+function handleAuthStateChange(user) {
+    console.log("🔐 Estado de autenticación cambiado:", user ? "Usuario conectado" : "No hay usuario");
+    
+    const loginSection = document.getElementById('login-section');
+    const userSection = document.getElementById('user-section');
+    const logoutBtn = document.getElementById('logout-btn');
+    
+    if (user) {
+        // Usuario conectado
+        if (loginSection) loginSection.style.display = 'none';
+        if (userSection) userSection.style.display = 'block';
+        if (logoutBtn) logoutBtn.style.display = 'block';
+        
+        console.log("👤 Usuario:", user.email);
+    } else {
+        // Usuario no conectado
+        if (loginSection) loginSection.style.display = 'block';
+        if (userSection) userSection.style.display = 'none';
+        if (logoutBtn) logoutBtn.style.display = 'none';
+        
+        console.log("👤 No hay usuario conectado");
+    }
+}
+
 // VARIABLES GLOBALES QUE FALTAN
 let registerBtn = document.getElementById('register-btn');
 let loginBtn = document.getElementById('login-btn');
@@ -46,6 +70,12 @@ if (!logoutBtn) console.warn('logout-btn no encontrado');
 
 // Referencias a elementos del DOM
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, configurando eventos...');
+    
+    // Configurar observer de autenticación
+    if (window.auth) {
+        auth.onAuthStateChanged(handleAuthStateChange);
+    }
     // Establecer año actual
     document.getElementById('current-year').textContent = new Date().getFullYear();
     

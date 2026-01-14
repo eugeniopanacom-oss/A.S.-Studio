@@ -52,13 +52,6 @@ try {
         .then(() => console.log("💾 Persistencia de Auth configurada"))
         .catch(err => console.warn("⚠️ Error en persistencia Auth:", err.message));
     
-enableIndexedDbPersistence(db).catch(err => {
-    if (err.code === 'failed-precondition') {
-        console.warn("⚠️ Persistencia Firestore: Múltiples pestañas abiertas");
-    } else if (err.code === 'unimplemented') {
-        console.warn("⚠️ Persistencia Firestore no soportada");
-    }
-});  
         
     console.log("🎉 Configuración de Firebase COMPLETADA");
     
