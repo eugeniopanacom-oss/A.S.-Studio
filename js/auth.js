@@ -58,6 +58,58 @@ function handleAuthStateChange(user) {
     }
 }
 
+async function checkUserRoleAndRedirect(user) {
+    try {
+        console.log('🔍 Verificando rol del usuario:', user.email);
+        
+        if (!window.db) {
+            console.warn('Firestore no disponible, redirigiendo a user.html');
+            window.location.href = 'user.html';
+            return;
+        }
+        
+        // Obtener documento del usuario desde Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            const userRole = userData.role || 'user';
+            const isAdmin = userRole === 'admin';
+            
+            console.log(`🎯 Rol detectado: ${userRole}`, isAdmin ? '(Admin)' : '(Usuario)');
+            
+            // Redirigir según rol
+            if (isAdmin && window.location.pathname !== '/admin.html') {
+                console.log('➡️ Redirigiendo admin a admin.html');
+                window.location.href = 'admin.html';
+            } else if (!isAdmin && window.location.pathname !== '/user.html') {
+                console.log('➡️ Redirigiendo usuario a user.html');
+                window.location.href = 'user.html';
+            } else {
+                console.log('✅ Usuario ya está en la página correcta');
+            }
+        } else {
+            // Si no existe documento, crear uno por defecto
+            console.log('📝 Creando documento de usuario por defecto');
+            await db.collection('users').doc(user.uid).set({
+                email: user.email,
+                displayName: user.displayName || user.email.split('@')[0],
+                role: 'user',
+                createdAt: new Date(),
+                lastLogin: new Date()
+            });
+            
+            console.log('➡️ Redirigiendo nuevo usuario a user.html');
+            window.location.href = 'user.html';
+        }
+        
+    } catch (error) {
+        console.error('❌ Error al verificar rol:', error);
+        // En caso de error, redirigir a user.html por defecto
+        window.location.href = 'user.html';
+    }
+}
+
 // VARIABLES GLOBALES QUE FALTAN
 let registerBtn = document.getElementById('register-btn');
 let loginBtn = document.getElementById('login-btn');
@@ -335,37 +387,6 @@ async function registerWithEmail(email, password, displayName) {
     }
 }
 
-async function loginWithEmail(email, password) {
-    const loginBtn = document.getElementById('login-btn');
-    
-    if (!loginBtn) {
-        console.error('login-btn no encontrado');
-        return;
-    }
-    
-    showLoading(loginBtn);
-    
-    try {
-        console.log('Iniciando sesión:', email);
-        
-        if (!window.auth || typeof auth.signInWithEmailAndPassword !== 'function') {
-            throw new Error('Firebase Auth no está disponible');
-        }
-        
-        await auth.signInWithEmailAndPassword(email, password);
-        showNotification('Sesión iniciada', 'success');
-        setTimeout(() => {
-            window.location.href = 'user.html';
-        }, 1500);
-        
-    } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        showNotification('Error: ' + error.message, 'error');
-    } finally {
-        hideLoading(loginBtn);
-    }
-}
-
 // ========== CONFIGURACIÓN INICIAL ==========
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, configurando eventos...');
@@ -458,6 +479,7 @@ function switchAuthForm(formType) {
 // Función para iniciar sesión con email y contraseña
 async function loginWithEmail() {
     console.log("🔐 Intentando login...");
+
     
     const email = document.getElementById('login-email')?.value.trim();
     const password = document.getElementById('login-password')?.value;
@@ -514,6 +536,39 @@ async function loginWithEmail() {
         showNotification('Error', errorMessage);
     } finally {
         if (loginBtn) removeLoading(loginBtn, 'Iniciar Sesión');
+    }
+async function loginWithEmail(email, password) {
+    const loginBtn = document.getElementById('login-btn');
+    
+    if (!loginBtn) {
+        console.error('login-btn no encontrado');
+        return;
+    }
+    
+    showLoading(loginBtn);
+    
+    try {
+        console.log('🔐 Iniciando sesión:', email);
+        
+        if (!window.auth) {
+            throw new Error('Firebase Auth no disponible');
+        }
+        
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        console.log('✅ Sesión iniciada:', user.email);
+        showNotification('Sesión iniciada correctamente', 'success');
+        
+        // ACTUALIZA ESTA PARTE:
+        // En lugar de redirigir directamente, verificar rol
+        await checkUserRoleAndRedirect(user);
+        
+    } catch (error) {
+        console.error('❌ Error al iniciar sesión:', error);
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        hideLoading(loginBtn);
     }
 }
 
@@ -653,3 +708,4 @@ function showNotification(title, message) {
 }
 
 console.log("✅ auth.js - versión corregida cargada completamente");
+}
