@@ -941,14 +941,14 @@ async function addNewAdmin() {
     const newAdminEmail = document.getElementById('new-admin-email').value.trim();
     
     if (!newAdminEmail) {
-        showNotification('Error', 'Por favor, ingresa un correo electrónico');
+        showNotification('eugeniopanacom@gmail.com');
         return;
     }
     
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newAdminEmail)) {
-        showNotification('eugeniopanacom@gmail.com');
+        showNotification('Error', 'Por favor, ingresa un correo electrónico válido');
         return;
     }
     
