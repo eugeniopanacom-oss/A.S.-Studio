@@ -82,7 +82,7 @@ function loadAdminInfo() {
     
     if (user) {
         document.getElementById('admin-name').textContent = user.displayName || 'Administrador';
-        document.getElementById('admin-email').textContent = user.email || 'admin@asstudio.com';
+        document.getElementById('admin-email').textContent = user.email || 'eugeniopanacom@gmail.com'
     }
 }
 
@@ -941,7 +941,7 @@ async function addNewAdmin() {
     const newAdminEmail = document.getElementById('new-admin-email').value.trim();
     
     if (!newAdminEmail) {
-        showNotification('eugeniopanacom@gmail.com');
+        showNotification('Error', 'Por favor, ingresa un correo electrónico');
         return;
     }
     
