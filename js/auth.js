@@ -105,9 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Permitir enviar formularios con Enter (pero prevenir submit)
-    const loginEmail = document.getElementById('login-email');
-    const loginPassword = document.getElementById('login-password');
-    
     if (loginEmail) loginEmail.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -358,9 +355,6 @@ function renderRecaptcha() {
         console.error("❌ Error al renderizar recaptcha:", error);
     }
 }
-
-// Resto de las funciones permanecen igual...
-// [Las otras funciones de auth.js que ya tenías]
 
 // Función para mostrar notificaciones
 function showNotification(title, message) {

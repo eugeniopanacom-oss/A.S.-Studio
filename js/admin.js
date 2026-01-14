@@ -948,7 +948,7 @@ async function addNewAdmin() {
     // Validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newAdminEmail)) {
-        showNotification('Error', 'Por favor, ingresa un correo electrónico válido');
+        showNotification('eugeniopanacom@gmail.com');
         return;
     }
     

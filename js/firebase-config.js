@@ -1,18 +1,14 @@
-// CÓDIGO PARA CREAR firebase-config.js DESDE LA CONSOLA
-console.log("🚀 Creando firebase-config.js...");
-
-// 1. Primero, crear el contenido del archivo
-const firebaseConfigContent = `// firebase-config.js - CONFIGURACIÓN CORREGIDA
+// firebase-config.js - ARCHIVO REAL DE CONFIGURACIÓN
 console.log("🔥 firebase-config.js cargado");
 
-// CONFIGURACIÓN DE FIREBASE - REEMPLAZA CON TUS DATOS REALES
+// CONFIGURACIÓN DE FIREBASE - TUS DATOS REALES (los que ya tienes)
 const firebaseConfig = {
     apiKey: "AIzaSyB3xCos-qTAOs8VIgcZk3ntUnPeI13YqR8",
     authDomain: "as-studio-d02c4.firebaseapp.com",
     projectId: "as-studio-d02c4",
     storageBucket: "as-studio-d02c4.firebasestorage.app",
     messagingSenderId: "1021827477452",
-    appId: "1:1021827477452:web:4bd7fa03063720f1cdb769"
+    appId: "1:1021827477452:web:4bd7fa03063720f1cdb769",
 };
 
 // INICIALIZACIÓN CON MANEJO DE ERRORES
@@ -97,19 +93,3 @@ try {
     
     console.warn("⚠️ Objetos de Firebase creados como placeholders");
 }
-`;
-
-// 2. Crear un blob y descargar el archivo
-const blob = new Blob([firebaseConfigContent], { type: 'text/javascript' });
-const url = URL.createObjectURL(blob);
-const a = document.createElement('a');
-a.href = url;
-a.download = 'firebase-config.js';
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-URL.revokeObjectURL(url);
-
-console.log("📥 Archivo firebase-config.js listo para descargar");
-console.log("💡 Descarga el archivo y guárdalo en la carpeta /js/ de tu proyecto");
-console.log("💡 Luego, REEMPLAZA los valores de firebaseConfig con TU configuración real");
