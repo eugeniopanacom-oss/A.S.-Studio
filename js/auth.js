@@ -190,6 +190,161 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ Todos los eventos configurados correctamente");
 });
 
+// auth.js - VERSIÓN COMPLETA
+console.log("auth.js - versión corregida cargada completamente");
+
+// ========== FUNCIONES DE UTILIDAD ==========
+function showLoading(button) {
+    if (button) {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span style="margin-right:8px">⌛</span> Procesando...';
+        button.disabled = true;
+        button.dataset.originalText = originalText;
+    }
+}
+
+function hideLoading(button) {
+    if (button && button.dataset.originalText) {
+        button.innerHTML = button.dataset.originalText;
+        button.disabled = false;
+    }
+}
+
+// Alias para compatibilidad (por si usas removeLoading)
+function removeLoading(button) {
+    hideLoading(button);
+}
+
+function showNotification(message, type = 'info') {
+    // Usa alert temporalmente
+    alert(`${type === 'error' ? '❌ Error' : type === 'success' ? '✅ Éxito' : 'ℹ️ Info'}: ${message}`);
+}
+
+// ========== FUNCIONES PRINCIPALES ==========
+async function registerWithEmail(email, password, displayName) {
+    const registerBtn = document.getElementById('register-btn');
+    
+    if (!registerBtn) {
+        console.error('register-btn no encontrado');
+        return;
+    }
+    
+    showLoading(registerBtn);
+    
+    try {
+        console.log('Registrando:', displayName, email);
+        
+        // VERIFICA que auth existe
+        if (!window.auth || typeof auth.createUserWithEmailAndPassword !== 'function') {
+            throw new Error('Firebase Auth no está disponible. ¿Se cargó firebase-config.js?');
+        }
+        
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        await userCredential.user.updateProfile({ displayName: displayName });
+        
+        // Guardar en Firestore
+        if (window.db) {
+            await db.collection('users').doc(userCredential.user.uid).set({
+                email: email,
+                displayName: displayName,
+                createdAt: new Date(),
+                role: 'user'
+            });
+        }
+        
+        showNotification('Cuenta creada exitosamente', 'success');
+        setTimeout(() => {
+            window.location.href = 'user.html';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Error al registrar:', error);
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        hideLoading(registerBtn);
+    }
+}
+
+async function loginWithEmail(email, password) {
+    const loginBtn = document.getElementById('login-btn');
+    
+    if (!loginBtn) {
+        console.error('login-btn no encontrado');
+        return;
+    }
+    
+    showLoading(loginBtn);
+    
+    try {
+        console.log('Iniciando sesión:', email);
+        
+        if (!window.auth || typeof auth.signInWithEmailAndPassword !== 'function') {
+            throw new Error('Firebase Auth no está disponible');
+        }
+        
+        await auth.signInWithEmailAndPassword(email, password);
+        showNotification('Sesión iniciada', 'success');
+        setTimeout(() => {
+            window.location.href = 'user.html';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        hideLoading(loginBtn);
+    }
+}
+
+// ========== CONFIGURACIÓN INICIAL ==========
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, configurando eventos...');
+    
+    // Verificar que Firebase está disponible
+    if (!window.auth) {
+        console.warn('⚠️ Auth no está disponible. Verifica el orden de carga de scripts.');
+    } else {
+        console.log('✅ Auth disponible:', typeof auth);
+    }
+    
+    // Login form
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            loginWithEmail(email, password);
+        });
+    }
+    
+    // Register form
+    const registerForm = document.getElementById('register-form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const displayName = document.getElementById('register-name').value;
+            registerWithEmail(email, password, displayName);
+        });
+    }
+    
+    // Logout button (puede no existir en index.html)
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn && window.auth) {
+        logoutBtn.addEventListener('click', function() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        });
+    } else if (!logoutBtn) {
+        console.log('ℹ️ logout-btn no encontrado (normal en página de login)');
+    }
+    
+    console.log('✅ Todos los eventos configurados correctamente');
+});
+
 // Función para cambiar entre formularios de autenticación
 function switchAuthForm(formType) {
     console.log(`🔄 Cambiando a formulario: ${formType}`);

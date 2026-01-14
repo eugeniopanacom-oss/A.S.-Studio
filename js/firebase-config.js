@@ -1,8 +1,6 @@
 // firebase-config.js - ARCHIVO REAL DE CONFIGURACIÓN
 console.log("🔥 firebase-config.js cargado");
 
-import { enableIndexedDbPersistence } from 'firebase/firestore';
-
 // CONFIGURACIÓN DE FIREBASE - TUS DATOS REALES (los que ya tienes)
 const firebaseConfig = {
     apiKey: "AIzaSyB3xCos-qTAOs8VIgcZk3ntUnPeI13YqR8",
