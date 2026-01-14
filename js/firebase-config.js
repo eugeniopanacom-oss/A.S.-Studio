@@ -1,6 +1,8 @@
 // firebase-config.js - ARCHIVO REAL DE CONFIGURACIÓN
 console.log("🔥 firebase-config.js cargado");
 
+import { enableIndexedDbPersistence } from 'firebase/firestore';
+
 // CONFIGURACIÓN DE FIREBASE - TUS DATOS REALES (los que ya tienes)
 const firebaseConfig = {
     apiKey: "AIzaSyB3xCos-qTAOs8VIgcZk3ntUnPeI13YqR8",
@@ -52,16 +54,14 @@ try {
         .then(() => console.log("💾 Persistencia de Auth configurada"))
         .catch(err => console.warn("⚠️ Error en persistencia Auth:", err.message));
     
-    db.enablePersistence()
-        .then(() => console.log("💾 Persistencia de Firestore activada"))
-        .catch(err => {
-            if (err.code === 'failed-precondition') {
-                console.warn("⚠️ Persistencia Firestore: Múltiples pestañas abiertas");
-            } else if (err.code === 'unimplemented') {
-                console.warn("⚠️ Persistencia Firestore no soportada");
-            }
-        });
-    
+enableIndexedDbPersistence(db).catch(err => {
+    if (err.code === 'failed-precondition') {
+        console.warn("⚠️ Persistencia Firestore: Múltiples pestañas abiertas");
+    } else if (err.code === 'unimplemented') {
+        console.warn("⚠️ Persistencia Firestore no soportada");
+    }
+});  
+        
     console.log("🎉 Configuración de Firebase COMPLETADA");
     
 } catch (error) {

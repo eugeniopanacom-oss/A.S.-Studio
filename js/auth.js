@@ -38,7 +38,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerPasswordConfirm = document.getElementById('register-password-confirm');
     
     // Cargar fondo de pantalla
-    loadBackgroundImage('main');
+    function loadBackgroundImage() {
+        const bgImage = localStorage.getItem('backgroundImage');
+        if (bgImage) {
+            document.body.style.backgroundImage = `url('${bgImage}')`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundAttachment = 'fixed';
+        }
+    }
+    
+    loadBackgroundImage();
     
     // Manejo de cambio de pestañas
     if (loginTab) loginTab.addEventListener('click', (e) => {
