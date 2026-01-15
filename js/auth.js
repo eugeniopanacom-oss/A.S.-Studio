@@ -74,20 +74,27 @@ async function checkUserRoleAndRedirect(user) {
         if (userDoc.exists) {
             const userData = userDoc.data();
             const userRole = userData.role || 'user';
-            const isAdmin = userRole === 'admin';
+            const isAdmin = userRole.toLowerCase() === 'admin'; // ← Case insensitive
             
             console.log(`🎯 Rol detectado: ${userRole}`, isAdmin ? '(Admin)' : '(Usuario)');
+            console.log(`📍 Página actual: ${window.location.pathname}`);
+            
+            // VERIFICACIÓN MEJORADA - usa includes() en lugar de !==
+            const currentPath = window.location.pathname;
+            const isOnAdminPage = currentPath.includes('admin.html');
+            const isOnUserPage = currentPath.includes('user.html');
             
             // Redirigir según rol
-            if (isAdmin && window.location.pathname !== '/admin.html') {
+            if (isAdmin && !isOnAdminPage) {
                 console.log('➡️ Redirigiendo admin a admin.html');
                 window.location.href = 'admin.html';
-            } else if (!isAdmin && window.location.pathname !== '/user.html') {
+            } else if (!isAdmin && !isOnUserPage) {
                 console.log('➡️ Redirigiendo usuario a user.html');
                 window.location.href = 'user.html';
             } else {
                 console.log('✅ Usuario ya está en la página correcta');
             }
+            
         } else {
             // Si no existe documento, crear uno por defecto
             console.log('📝 Creando documento de usuario por defecto');

@@ -6,7 +6,7 @@
 │   ├── styles.css          # Estilos principales
 │   └── admin.css           # Estilos específicos para admin
 ├── js/
-│   ├── firebase-config.js  # Configuración de Firebase (db en modo de prueba, configurar telefono y google)
+│   ├── firebase-config.js  # Configuración de Firebase 
 │   ├── auth.js             # Autenticación
 │   ├── admin.js            # Funciones de administrador
 │   └── user.js             # Funciones de usuario
