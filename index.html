@@ -2785,21 +2785,41 @@
     }
 }
 
-/* ========== ANIMACIÓN PARA INDICAR SCROLL EXITOSO ========== */
-@keyframes highlightPulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+/* ========== SOLUCIÓN DEFINITIVA - TÍTULO SIEMPRE VISIBLE ========== */
+@media (max-width: 768px) {
+    /* Asegurar que el header no tape el título */
+    html {
+        scroll-padding-top: 90px; /* Espacio reservado para el header */
     }
-    70% {
-        box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
+    
+    /* Mejorar la sección de reserva */
+    #reservation {
+        scroll-margin-top: 90px; /* Margen cuando se hace scroll hacia la sección */
     }
-    100% {
-        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+    
+    /* Resaltar el título cuando se hace scroll */
+    #reservation .section-title {
+        transition: all 0.3s ease;
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
-}
-
-.highlight-section {
-    animation: highlightPulse 1.5s ease;
+    
+    /* Animación de resaltado */
+    @keyframes titleGlow {
+        0% {
+            text-shadow: 0 0 0 rgba(212, 175, 55, 0);
+        }
+        50% {
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.7);
+        }
+        100% {
+            text-shadow: 0 0 0 rgba(212, 175, 55, 0);
+        }
+    }
+    
+    .title-highlight {
+        animation: titleGlow 1.5s ease;
+    }
 }
     </style>
 <body>
@@ -3608,7 +3628,7 @@ function verificarScrollHorarios() {
     }
 }
 
-// ========== FUNCIÓN CORREGIDA PARA SCROLL PERFECTO AL FORMULARIO ==========
+// ========== FUNCIÓN selectTime CORREGIDA - Scroll PERFECTO ==========
 function selectTime(timeStr) {
     console.log("🕐 selectTime llamado con:", timeStr);
 
@@ -3640,31 +3660,45 @@ function selectTime(timeStr) {
     // Actualizar resumen
     updateReservationSummary();
 
-    // 🔴 🔴 🔴 SOLUCIÓN DEL SCROLL - MÓVIL SOLAMENTE 🔴 🔴 🔴
-   // SOLUCIÓN ULTRA SIMPLE - PEGAR EN selectTime()
-if (window.selectedDate && window.innerWidth <= 768) {
-    setTimeout(() => {
-        const reservationSection = document.getElementById('reservation');
-        if (reservationSection) {
-            // FORZAR scroll a la posición exacta del TÍTULO
-            const sectionTitle = reservationSection.querySelector('.section-title');
-            
-            if (sectionTitle) {
-                // Calcular posición para que el título quede centrado
-                const titlePosition = sectionTitle.getBoundingClientRect().top + window.pageYOffset;
-                const viewportHeight = window.innerHeight;
-                const offset = viewportHeight / 4; // Ajuste fino
+    // 🔴 🔴 🔴 SOLUCIÓN DEFINITIVA - SCROLL PERFECTO EN MÓVIL 🔴 🔴 🔴
+    if (window.selectedDate && window.innerWidth <= 768) {
+        setTimeout(() => {
+            const reservationSection = document.getElementById('reservation');
+            if (reservationSection) {
                 
-                window.scrollTo({
-                    top: titlePosition - offset,
-                    behavior: 'smooth'
-                });
+                // Buscar el TÍTULO de la sección
+                const sectionTitle = reservationSection.querySelector('.section-title');
                 
-                console.log(`📍 Scroll forzado a posición: ${titlePosition - offset}px`);
+                if (sectionTitle) {
+                    // Obtener la posición del título
+                    const titlePosition = sectionTitle.getBoundingClientRect().top + window.pageYOffset;
+                    
+                    // Altura del header fijo (ajusta según tu header)
+                    const headerHeight = 80;
+                    
+                    // Calcular posición para que el título quede DEBAJO del header
+                    const targetPosition = titlePosition - headerHeight - 10; // 10px de margen extra
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    console.log(`📍 Scroll perfecto - Título visible justo debajo del header`);
+                    
+                    // Efecto visual de resaltado
+                    sectionTitle.style.transition = 'color 0.3s ease, text-shadow 0.3s ease';
+                    sectionTitle.style.color = 'var(--primary)';
+                    sectionTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.5)';
+                    
+                    setTimeout(() => {
+                        sectionTitle.style.color = '';
+                        sectionTitle.style.textShadow = '';
+                    }, 1500);
+                }
             }
-        }
-    }, 400);
-}
+        }, 350);
+    }
     
     // Mostrar oferta si corresponde
     setTimeout(() => {
@@ -6960,7 +6994,7 @@ function selectDate(dateStr) {
     }
 }
 
-// ========== FUNCIÓN DE SCROLL MEJORADA ==========
+// ========== FUNCIÓN DE SCROLL MEJORADA - Título SIEMPRE visible ==========
 function scrollToReservationForm() {
     // Solo aplicar en móviles
     if (window.innerWidth > 768) return;
@@ -6973,30 +7007,32 @@ function scrollToReservationForm() {
             const sectionTitle = reservationSection.querySelector('.section-title');
             
             if (sectionTitle) {
-                // Scroll al TÍTULO centrado en la pantalla
-                sectionTitle.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' // Centra el título verticalmente
+                // Obtener la posición del título
+                const titlePosition = sectionTitle.getBoundingClientRect().top + window.pageYOffset;
+                
+                // Altura del header fijo (ajusta según tu header)
+                const headerHeight = 80;
+                
+                // Posición final: título justo debajo del header
+                const targetPosition = titlePosition - headerHeight - 10;
+                
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
                 });
                 
-                console.log("🎯 Scroll al título de Reserva");
-            } else {
-                // Fallback: scroll al inicio de la sección con offset
-                const yOffset = -30;
-                const y = reservationSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({ 
-                    top: y, 
-                    behavior: 'smooth' 
-                });
+                console.log("🎯 Scroll al título con offset correcto");
+                
+                // Efecto visual de resaltado
+                sectionTitle.style.transition = 'color 0.3s ease, text-shadow 0.3s ease';
+                sectionTitle.style.color = 'var(--primary)';
+                sectionTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.5)';
+                
+                setTimeout(() => {
+                    sectionTitle.style.color = '';
+                    sectionTitle.style.textShadow = '';
+                }, 1500);
             }
-            
-            // Efecto visual de resaltado
-            reservationSection.style.transition = 'box-shadow 0.3s ease';
-            reservationSection.style.boxShadow = '0 0 20px rgba(212, 175, 55, 0.5)';
-            
-            setTimeout(() => {
-                reservationSection.style.boxShadow = '';
-            }, 1500);
         }
     }, 300);
 }
