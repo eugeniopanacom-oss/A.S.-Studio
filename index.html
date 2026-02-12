@@ -3641,71 +3641,12 @@ function selectTime(timeStr) {
     // Actualizar resumen
     updateReservationSummary();
 
-    // 🔴 🔴 🔴 SOLUCIÓN DE SCROLL PARA "RESERVA TU TURNO" 🔴 🔴 🔴
-    if (window.selectedDate) {
-        scrollToReservationTitle();
-    }
-    
     // 🔴 IMPORTANTE: Solo mostrar oferta cuando hay fecha Y hora
     setTimeout(() => {
         verificarYMostrarOferta();
     }, 100);
     
     console.log("⏰ Hora seleccionada:", timeStr);
-}
-
-// ========== FUNCIÓN NUEVA: SCROLL PERFECTO AL TÍTULO "RESERVA TU TURNO" ==========
-function scrollToReservationTitle() {
-    setTimeout(() => {
-        // Solo en móviles
-        if (window.innerWidth > 768) return;
-        
-        const reservationSection = document.getElementById('reservation');
-        if (!reservationSection) return;
-        
-        // Buscar el título "Reserva tu Turno" (h2 con clase section-title)
-        const reservationTitle = reservationSection.querySelector('.section-title');
-        
-        if (reservationTitle) {
-            // OPCIÓN 1: Scroll al TÍTULO (recomendada)
-            reservationTitle.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center', // Centra el título en la pantalla
-                inline: 'nearest'
-            });
-            
-            console.log("✅ Scroll al TÍTULO 'Reserva tu Turno'");
-            
-            // Pequeño efecto visual para indicar que llegó
-            reservationTitle.style.transition = 'color 0.3s ease, text-shadow 0.3s ease';
-            reservationTitle.style.color = 'var(--primary)';
-            reservationTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.7)';
-            
-            setTimeout(() => {
-                reservationTitle.style.color = '';
-                reservationTitle.style.textShadow = '';
-            }, 1000);
-            
-        } else {
-            // OPCIÓN 2: Fallback - scroll a la sección con offset
-            const yOffset = -30; // Margen superior
-            const y = reservationSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({ top: y, behavior: 'smooth' });
-            
-            console.log("✅ Scroll a sección de reserva (fallback)");
-        }
-        
-        // OPCIÓN 3: Scroll MANUAL ultra preciso (si las anteriores fallan)
-        setTimeout(() => {
-            if (window.scrollY === 0 || Math.abs(window.scrollY - reservationSection.offsetTop) > 100) {
-                window.scrollTo({
-                    top: reservationSection.offsetTop - 20,
-                    behavior: 'smooth'
-                });
-            }
-        }, 500);
-        
-    }, 350); // Delay para que se actualice el DOM
 }
 
 // ========== AGREGAR LIMPIEZA DEL FORMULARIO ==========
@@ -7012,70 +6953,72 @@ function scrollToReservationForm() {
                 reservationSection.style.boxShadow = '';
             }, 1000);
         }
-// Esta función ahora llama a la nueva función mejorada
-    scrollToReservationTitle();
-    scrollReservaUltraPreciso();
-
-
     }, 300); // Pequeño delay para mejor UX
 }
 
-// ========== SOLUCIÓN ULTRA DEFINITIVA PARA SCROLL ==========
-function scrollReservaUltraPreciso() {
-    if (window.innerWidth > 768) return;
+// ========== FUNCIÓN ÚNICA Y DEFINITIVA - TÍTULO EN PARTE SUPERIOR ==========
+function scrollToReservationForm() {
+    console.log("🎯 Scroll a formulario - TÍTULO EN PARTE SUPERIOR");
     
-    console.log("🎯 Ejecutando scroll ULTRA preciso");
+    // Cancelar cualquier intento de scroll anterior
+    if (window.scrollTimeout) {
+        clearTimeout(window.scrollTimeout);
+    }
     
-    // Esperar a que el DOM esté completamente actualizado
-    requestAnimationFrame(() => {
-        setTimeout(() => {
-            const reservationSection = document.getElementById('reservation');
-            if (!reservationSection) return;
+    window.scrollTimeout = setTimeout(() => {
+        // SOLO en móviles
+        if (window.innerWidth > 768) return;
+        
+        const reservationSection = document.getElementById('reservation');
+        if (!reservationSection) return;
+        
+        // Buscar el TÍTULO "Reserva tu Turno"
+        const reservationTitle = reservationSection.querySelector('.section-title');
+        
+        if (reservationTitle) {
+            // 🔴 🔴 🔴 SOLUCIÓN: TÍTULO PEGADO ARRIBA 🔴 🔴 🔴
             
-            // Calcular posición exacta
-            const rect = reservationSection.getBoundingClientRect();
-            const absoluteTop = window.pageYOffset + rect.top;
-            
-            // Obtener altura de la ventana
-            const windowHeight = window.innerHeight;
-            
-            // Calcular posición para que el título quede centrado
-            const titleElement = reservationSection.querySelector('.section-title');
-            let targetPosition;
-            
-            if (titleElement) {
-                const titleRect = titleElement.getBoundingClientRect();
-                const titleTop = window.pageYOffset + titleRect.top;
-                
-                // Posicionar el título a 1/3 de la pantalla desde arriba
-                targetPosition = titleTop - (windowHeight / 4);
-            } else {
-                // Fallback: posicionar la sección a 80px del top
-                targetPosition = absoluteTop - 80;
-            }
-            
-            // Forzar scroll
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
+            // OPCIÓN 1: ScrollIntoView con block: 'start' - TÍTULO ARRIBA
+            reservationTitle.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start',  // ✅ TÍTULO PEGADO AL BORDE SUPERIOR
+                inline: 'nearest'
             });
             
-            console.log(`📍 Scroll forzado a posición: ${targetPosition}px`);
+            console.log("✅ Scroll - Título pegado a la parte superior");
             
-            // Verificar y corregir si es necesario
+            // Pequeño ajuste para que quede perfecto (compensar header)
             setTimeout(() => {
-                const currentScroll = window.scrollY;
-                if (Math.abs(currentScroll - targetPosition) > 50) {
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'auto' // Sin animación para corrección
+                // Si el header está tapando el título, subir un poco más
+                const header = document.querySelector('header');
+                const headerHeight = header ? header.offsetHeight : 0;
+                
+                if (headerHeight > 0) {
+                    window.scrollBy({
+                        top: -headerHeight - 5, // Subir para compensar el header sticky
+                        behavior: 'smooth'
                     });
-                    console.log("🔄 Scroll corregido");
+                    console.log(`✅ Ajuste fino: compensación header ${headerHeight}px`);
                 }
-            }, 500);
+            }, 400);
             
-        }, 300);
-    });
+            // Efecto visual sutil (opcional)
+            reservationTitle.style.transition = 'color 0.3s ease';
+            reservationTitle.style.color = 'var(--primary)';
+            
+            setTimeout(() => {
+                reservationTitle.style.color = '';
+            }, 800);
+            
+        } else {
+            // OPCIÓN 2: Fallback - scroll con offset 0
+            window.scrollTo({
+                top: reservationSection.offsetTop - 10, // Muy arriba
+                behavior: 'smooth'
+            });
+            console.log("✅ Scroll fallback - sección arriba");
+        }
+    }, 300); // Delay único
 }
 
 // ========== FUNCIONES PARA LEER MÁS/MENOS ==========
