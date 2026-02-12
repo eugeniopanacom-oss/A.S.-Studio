@@ -1,0 +1,286 @@
+/* ====================================================================
+   🚀 OPTIMIZACIÓN COMPLETA PARA MÓVILES Y TABLETAS 🚀
+   ==================================================================== */
+
+/* === DISPOSITIVOS EXTRA PEQUEÑOS (MÓVILES, < 576px) === */
+@media (max-width: 576px) {
+    /* Header - Reducir tamaño */
+    .logo h1 {
+        font-size: 1.8rem !important;
+    }
+    .logo i {
+        font-size: 1.8rem !important;
+    }
+    .tagline {
+        font-size: 0.9rem;
+        padding: 0 10px;
+    }
+
+    /* Navegación - Botones más pequeños y en columna */
+    .page-nav {
+        flex-direction: column;
+        gap: 10px;
+        padding: 0 15px;
+    }
+    .page-btn {
+        width: 100%;
+        padding: 12px !important;
+        font-size: 1rem;
+    }
+
+    /* Bienvenida - Ajustar padding */
+    .welcome {
+        padding: 30px 15px !important;
+    }
+    .welcome h2 {
+        font-size: 1.8rem !important;
+    }
+    .welcome p {
+        font-size: 1rem !important;
+    }
+
+    /* Títulos de sección */
+    .section-title {
+        font-size: 1.5rem !important;
+    }
+
+    /* CALENDARIO - MÁS COMPACTO */
+    .calendar-header h3 {
+        font-size: 1.2rem !important;
+    }
+    .calendar-header button {
+        width: 35px !important;
+        height: 35px !important;
+        font-size: 1.2rem !important;
+    }
+    .calendar-day, .calendar-date {
+        padding: 10px 5px !important;
+        font-size: 0.9rem;
+    }
+
+    /* HORARIOS - CON SCROLL */
+    .hours-list {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
+    /* TARJETAS DE SERVICIO - 1 COLUMNA */
+    .services {
+        grid-template-columns: 1fr !important;
+    }
+    .service-card {
+        min-height: auto !important;
+        padding: 20px !important;
+    }
+    .service-name {
+        font-size: 1.3rem !important;
+    }
+    .service-price {
+        font-size: 1.6rem !important;
+    }
+
+    /* FORMULARIO - FULL WIDTH */
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .form-row .form-group {
+        min-width: 100% !important;
+    }
+
+    /* MODAL DE CONFIRMACIÓN - TAMAÑO MÓVIL */
+    .confirmation-window {
+        padding: 25px 20px !important;
+        margin: 0 15px;
+    }
+    .confirmation-title {
+        font-size: 1.6rem !important;
+    }
+    .confirmation-item {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 5px;
+        padding: 12px 0 !important;
+    }
+    .confirmation-label {
+        min-width: 100% !important;
+        font-size: 0.9rem;
+    }
+    .confirmation-value {
+        font-size: 1rem !important;
+        padding-left: 5px;
+    }
+    .confirmation-actions {
+        flex-direction: column;
+    }
+    .confirmation-btn {
+        width: 100%;
+    }
+
+    /* MODAL DE OFERTA - MÓVIL */
+    .oferta-modal {
+        padding: 25px 20px !important;
+    }
+    .precios-container {
+        flex-direction: column;
+        gap: 15px !important;
+    }
+    .oferta-titulo {
+        font-size: 1.8rem !important;
+    }
+    .oferta-actions {
+        flex-direction: column;
+    }
+    .oferta-btn {
+        width: 100%;
+    }
+
+    /* FOOTER DE REPORTES */
+    .report-section {
+        padding: 10px !important;
+    }
+    .report-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* NOTIFICACIONES */
+    .notification {
+        left: 20px !important;
+        right: 20px !important;
+        top: 20px !important;
+        width: auto;
+        text-align: center;
+    }
+}
+
+/* === DISPOSITIVOS MEDIANOS (TABLETAS, 577px - 768px) === */
+@media (min-width: 577px) and (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .logo h1 {
+        font-size: 2.2rem;
+    }
+
+    /* Servicios: 2 columnas */
+    .services {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Calendario y horas uno debajo del otro */
+    .calendar-section {
+        flex-direction: column;
+    }
+
+    /* Ajustes del modal */
+    .confirmation-window {
+        max-width: 90%;
+    }
+}
+
+/* === MEJORAS PARA PANTALLAS MUY PEQUEÑAS ( < 400px ) === */
+@media (max-width: 400px) {
+    .logo h1 {
+        font-size: 1.5rem !important;
+    }
+    .logo i {
+        font-size: 1.5rem !important;
+    }
+    .welcome h2 {
+        font-size: 1.5rem !important;
+    }
+    .calendar-day, .calendar-date {
+        padding: 8px 2px !important;
+        font-size: 0.8rem;
+    }
+    .hour-option {
+        padding: 8px 12px !important;
+        font-size: 0.9rem;
+    }
+}
+
+/* === SOLUCIÓN PARA EL VIEWPORT EN IPHONE Y SAFARI === */
+@supports (-webkit-touch-callout: none) {
+    .confirmation-modal-overlay,
+    .oferta-modal-overlay {
+        height: -webkit-fill-available;
+    }
+}
+
+/* === MEJORA EN EL SCROLL DE HORARIOS (PARA TODOS) === */
+.hours-list {
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+/* Personalizar scrollbar para que sea más bonito */
+.hours-list::-webkit-scrollbar {
+    width: 6px;
+}
+.hours-list::-webkit-scrollbar-track {
+    background: var(--gray);
+    border-radius: 10px;
+}
+.hours-list::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+.hours-list::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark);
+}
+
+/* === BOTONES MÁS GRANDES PARA TÁCTIL === */
+@media (max-width: 768px) {
+    .btn, 
+    .page-btn,
+    .calendar-date,
+    .hour-option,
+    .confirmation-btn,
+    .oferta-btn {
+        min-height: 44px; /* Estándar Apple para accesibilidad táctil */
+    }
+    
+    /* Espacio extra en elementos clickeables */
+    .calendar-date {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* === EVITAR QUE EL TEXTO SEA DEMASIADO GRANDE EN LANDSCAPE === */
+@media (max-width: 900px) and (orientation: landscape) {
+    .confirmation-modal-overlay,
+    .oferta-modal-overlay {
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+    .confirmation-window,
+    .oferta-modal {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+}
+
+/* === ARREGLAR MODAL DE CONFIRMACIÓN EN PANTALLAS PEQUEÑAS === */
+@media (max-width: 768px) {
+    .confirmation-modal-overlay {
+        padding: 15px !important;
+        align-items: flex-start;
+    }
+    .confirmation-window {
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+}
+
+/* === MEJORAR LA VISIBILIDAD DE LAS FLECHAS DEL CALENDARIO EN MÓVIL === */
+@media (max-width: 480px) {
+    .calendar-header button span {
+        font-size: 1.8rem !important;
+    }
+}
