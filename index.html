@@ -2751,6 +2751,56 @@
         text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
     }
 }
+
+/* ========== SOLUCIÓN DEFINITIVA PARA SCROLL EN RESERVA ========== */
+@media (max-width: 768px) {
+    /* Mejorar la experiencia de scroll en la sección de reserva */
+    #reservation {
+        scroll-margin-top: 20px; /* Espacio superior al hacer scroll */
+    }
+    
+    /* Resaltar el título cuando se hace scroll */
+    #reservation .section-title {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    /* Efecto de resaltado al hacer scroll */
+    #reservation .section-title:target,
+    #reservation .section-title:focus {
+        color: var(--primary);
+        text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        transform: scale(1.02);
+    }
+    
+    /* Animación de pulso sutil para el resumen */
+    .reservation-summary {
+        transition: all 0.3s ease;
+    }
+    
+    .reservation-summary:target,
+    .reservation-summary:focus {
+        border-left: 4px solid var(--primary);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    }
+}
+
+/* ========== ANIMACIÓN PARA INDICAR SCROLL EXITOSO ========== */
+@keyframes highlightPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(212, 175, 55, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(212, 175, 55, 0);
+    }
+}
+
+.highlight-section {
+    animation: highlightPulse 1.5s ease;
+}
     </style>
 <body>
     <!-- Header con logo -->
@@ -3558,12 +3608,11 @@ function verificarScrollHorarios() {
     }
 }
 
-// ========== MODIFICAR LA FUNCIÓN selectTime ==========
-// Función para seleccionar hora - AGREGAR ESTA FUNCIÓN
+// ========== FUNCIÓN CORREGIDA PARA SCROLL PERFECTO AL FORMULARIO ==========
 function selectTime(timeStr) {
     console.log("🕐 selectTime llamado con:", timeStr);
 
-     // 🔴 NUEVO: Limpiar registros de ofertas cuando se cambia la hora
+    // Limpiar registros de ofertas cuando se cambia la hora
     if (window.selectedTime !== timeStr) {
         console.log("🕐 Hora cambiada, limpiando registros de ofertas");
         ofertaMostradaParaFechaHora = {};
@@ -3577,7 +3626,7 @@ function selectTime(timeStr) {
         return;
     }
 
-    // 🔴 SOLO asignar cuando el usuario realmente hace clic
+    // Asignar hora seleccionada
     window.selectedTime = timeStr;
 
     // Actualizar UI
@@ -3591,12 +3640,44 @@ function selectTime(timeStr) {
     // Actualizar resumen
     updateReservationSummary();
 
-    // Scroll al formulario si ya hay fecha seleccionada
-    if (window.selectedDate) {
-        scrollToReservationForm();
+    // 🔴 🔴 🔴 SOLUCIÓN DEL SCROLL - MÓVIL SOLAMENTE 🔴 🔴 🔴
+    if (window.selectedDate && window.innerWidth <= 768) {
+        setTimeout(() => {
+            const reservationSection = document.getElementById('reservation');
+            if (reservationSection) {
+                
+                // OPCIÓN 1: Scroll al TÍTULO de la sección (recomendada)
+                const sectionTitle = reservationSection.querySelector('.section-title');
+                if (sectionTitle) {
+                    sectionTitle.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' // Centra el título en la pantalla
+                    });
+                    console.log("✅ Scroll ajustado al TÍTULO de Reserva tu Turno");
+                } 
+                // OPCIÓN 2: Scroll al formulario con offset preciso
+                else {
+                    const yOffset = -20; // Margen superior
+                    const y = reservationSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({ 
+                        top: y, 
+                        behavior: 'smooth' 
+                    });
+                }
+                
+                // Efecto visual de resaltado
+                reservationSection.style.transition = 'box-shadow 0.3s ease, border 0.3s ease';
+                reservationSection.style.boxShadow = '0 0 25px rgba(212, 175, 55, 0.6)';
+                reservationSection.style.borderRadius = '8px';
+                
+                setTimeout(() => {
+                    reservationSection.style.boxShadow = '';
+                }, 1500);
+            }
+        }, 350); // Delay para que se actualice el resumen
     }
     
-    // 🔴 IMPORTANTE: Solo mostrar oferta cuando hay fecha Y hora
+    // Mostrar oferta si corresponde
     setTimeout(() => {
         verificarYMostrarOferta();
     }, 100);
@@ -6890,25 +6971,45 @@ function selectDate(dateStr) {
     }
 }
 
-// Función para hacer scroll a la sección de reserva
+// ========== FUNCIÓN DE SCROLL MEJORADA ==========
 function scrollToReservationForm() {
+    // Solo aplicar en móviles
+    if (window.innerWidth > 768) return;
+    
     setTimeout(() => {
         const reservationSection = document.getElementById('reservation');
         if (reservationSection) {
-            reservationSection.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
             
-            // Opcional: Agregar un pequeño efecto visual
+            // Buscar el título de la sección
+            const sectionTitle = reservationSection.querySelector('.section-title');
+            
+            if (sectionTitle) {
+                // Scroll al TÍTULO centrado en la pantalla
+                sectionTitle.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' // Centra el título verticalmente
+                });
+                
+                console.log("🎯 Scroll al título de Reserva");
+            } else {
+                // Fallback: scroll al inicio de la sección con offset
+                const yOffset = -30;
+                const y = reservationSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                window.scrollTo({ 
+                    top: y, 
+                    behavior: 'smooth' 
+                });
+            }
+            
+            // Efecto visual de resaltado
             reservationSection.style.transition = 'box-shadow 0.3s ease';
             reservationSection.style.boxShadow = '0 0 20px rgba(212, 175, 55, 0.5)';
             
             setTimeout(() => {
                 reservationSection.style.boxShadow = '';
-            }, 1000);
+            }, 1500);
         }
-    }, 300); // Pequeño delay para mejor UX
+    }, 300);
 }
 
 // ========== FUNCIONES PARA LEER MÁS/MENOS ==========
