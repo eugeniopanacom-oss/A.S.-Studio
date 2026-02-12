@@ -2751,79 +2751,6 @@
         text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
     }
 }
-
-/* ========== SOLUCIÓN DEFINITIVA PARA SCROLL EN MÓVIL ========== */
-@media (max-width: 768px) {
-    /* Resetear scroll behavior para evitar desbordes */
-    html {
-        scroll-behavior: smooth;
-        scroll-padding-top: 80px; /* Espacio superior para que no quede pegado al borde */
-    }
-    
-    /* Contenedor principal de horarios - ajuste fino */
-    .hours-container {
-        scroll-margin-top: 60px; /* Margen cuando se hace scroll */
-    }
-    
-    /* Cuando se selecciona una fecha, el scroll se ajusta al ENCABEZADO */
-    .hours-container h3 {
-        scroll-margin-top: 70px;
-    }
-    
-    /* Mejorar la experiencia de scroll */
-    .calendar-date.selected {
-        transition: all 0.3s ease;
-    }
-    
-    /* La sección de reserva debe ser visible en el scroll */
-    #reservation {
-        scroll-margin-top: 60px;
-    }
-}
-
-/* ========== AJUSTE PARA PANTALLAS MUY PEQUEÑAS ========== */
-@media (max-width: 480px) {
-    html {
-        scroll-padding-top: 70px;
-    }
-    
-    .hours-container h3 {
-        scroll-margin-top: 80px;
-    }
-}
-
-/* ========== SOLUCIÓN RADICAL PARA SCROLL EN MÓVIL ========== */
-@media (max-width: 768px) {
-    /* Resetear comportamiento de scroll */
-    html {
-        scroll-behavior: smooth;
-        scroll-padding-top: 70px; /* Espacio para el header sticky */
-    }
-    
-    /* Asegurar que el título sea el punto de referencia */
-    #reservation .section-title {
-        scroll-margin-top: 70px;
-    }
-    
-    /* El contenedor de horas ya no necesita scroll-margin */
-    .hours-container {
-        scroll-margin-top: 0;
-    }
-    
-    .hours-container h3 {
-        scroll-margin-top: 0;
-    }
-}
-
-@media (max-width: 480px) {
-    html {
-        scroll-padding-top: 60px;
-    }
-    
-    #reservation .section-title {
-        scroll-margin-top: 60px;
-    }
-}
     </style>
 <body>
     <!-- Header con logo -->
@@ -3549,7 +3476,6 @@ function inicializarCalendarioSimple() {
 }
 
 // ========== MODIFICAR LA FUNCIÓN seleccionarFecha ==========
-// ========== SOLUCIÓN DEFINITIVA DE SCROLL PARA MÓVIL ==========
 function seleccionarFecha(dateStr) {
     console.log("📅 Fecha seleccionada:", dateStr);
     
@@ -3589,52 +3515,32 @@ function seleccionarFecha(dateStr) {
         scheduleUpdateAvailableHours();
     }
     
-    // ========== SOLUCIÓN DE SCROLL PARA MÓVIL ==========
+    // 🔴 🔴 🔴 SOLUCIÓN DEL SCROLL - MÓVIL SOLAMENTE 🔴 🔴 🔴
     setTimeout(() => {
-        // SOLO en dispositivos móviles
         if (window.innerWidth <= 768) {
-            
-            // BUSCAR EL TÍTULO "Reserva tu Turno"
-            const reservationTitle = document.querySelector('#reservation .section-title');
-            
-            if (reservationTitle) {
-                // Obtener la posición del título
-                const titlePosition = reservationTitle.getBoundingClientRect().top + window.pageYOffset;
+            const hoursContainer = document.querySelector('.hours-container');
+            if (hoursContainer) {
+                // ENCONTRAR LA POSICIÓN DEL ENCABEZADO (H3)
+                const hoursHeader = hoursContainer.querySelector('h3');
                 
-                // Calcular offset para que el título quede justo debajo del header
-                const headerHeight = document.querySelector('header')?.offsetHeight || 70;
-                const targetPosition = titlePosition - headerHeight - 10;
-                
-                // Scroll suave al título
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
-                });
-                
-                console.log("✅ Scroll al título 'Reserva tu Turno'");
-                
-                // Opcional: Resaltar el título brevemente
-                reservationTitle.style.transition = 'color 0.3s ease, text-shadow 0.3s ease';
-                reservationTitle.style.color = '#d4af37';
-                reservationTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.7)';
-                
-                setTimeout(() => {
-                    reservationTitle.style.color = '';
-                    reservationTitle.style.textShadow = '';
-                }, 1000);
-                
-            } else {
-                // Fallback: si no encuentra el título, ir al contenedor de horas
-                const hoursContainer = document.querySelector('.hours-container');
-                if (hoursContainer) {
-                    hoursContainer.scrollIntoView({ 
+                if (hoursHeader) {
+                    // Scroll hacia el ENCABEZADO (no al contenedor completo)
+                    hoursHeader.scrollIntoView({ 
                         behavior: 'smooth', 
-                        block: 'start' 
+                        block: 'start', // Alinea la parte superior del header con la parte superior de la ventana
+                        inline: 'nearest'
                     });
+                    
+                    console.log("✅ Scroll ajustado al ENCABEZADO de horarios");
+                } else {
+                    // Fallback: scroll al contenedor con offset
+                    const yOffset = -20; // Margen superior
+                    const y = hoursContainer.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
                 }
             }
         }
-    }, 400); // Delay suficiente para que se rendericen los horarios
+    }, 350); // Pequeño delay para que se rendericen los horarios
 }
 
 // Agrega esta función para verificar si se necesita scroll
@@ -5632,14 +5538,15 @@ async function updateAvailableHours() {
         console.log(`✅ Horarios actualizados. Rango: ${horaInicio}:00 a ${horaFin}:00`);
         
         // 🔴 AGREGAR ESTO AL FINAL - Scroll solo si se acaba de seleccionar la fecha
-        if (window.selectedDate && window.innerWidth <= 768) {
-            // Usar requestAnimationFrame para asegurar que el DOM está actualizado
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    ajustarScrollHorariosManual();
-                }, 100);
-            });
-        }
+    if (window.selectedDate && window.innerWidth <= 768) {
+        // Usar requestAnimationFrame para asegurar que el DOM está actualizado
+        requestAnimationFrame(() => {
+            setTimeout(() => {
+                ajustarScrollHorariosManual();
+            }, 100);
+        });
+    }
+
         
     } else {
             hoursList.innerHTML = `
@@ -5670,6 +5577,7 @@ async function updateAvailableHours() {
     }
 }
 
+// 🔴 NUEVA FUNCIÓN: Scroll manual y preciso
 // 🔴 NUEVA FUNCIÓN: Scroll manual y preciso
 function ajustarScrollHorariosManual() {
     const hoursContainer = document.querySelector('.hours-container');
@@ -7563,43 +7471,5 @@ document.addEventListener('DOMContentLoaded', function() {
         instagramLink.title = "Se abrirá en la aplicación de Instagram. Búscame como @alexis.sebastiann";
     }
 });
-
-// ========== FUNCIÓN DE RESPALDO PARA SCROLL EN MÓVIL ==========
-// ========== FUNCIÓN DE RESPALDO PARA SCROLL EN MÓVIL ==========
-function ajustarScrollMovil() {
-    // Solo en móvil
-    if (window.innerWidth > 768) return;
-    
-    // Si hay una fecha seleccionada, ajustar scroll al título
-    if (window.selectedDate) {
-        setTimeout(() => {
-            const reservationTitle = document.querySelector('#reservation .section-title');
-            
-            if (reservationTitle) {
-                const titlePosition = reservationTitle.getBoundingClientRect().top + window.pageYOffset;
-                const headerHeight = document.querySelector('header')?.offsetHeight || 70;
-                const targetPosition = titlePosition - headerHeight - 10;
-                
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
-                });
-            }
-        }, 200);
-    }
-}
-
-// Ejecutar cuando cambia el tamaño de la ventana (orientación)
-window.addEventListener('resize', function() {
-    'use strict';
-    clearTimeout(window.resizeTimer);
-    window.resizeTimer = setTimeout(ajustarScrollMovil, 250);
-});
-
-// Ejecutar cuando se carga completamente la página
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(ajustarScrollMovil, 500);
-});
-
     </script>
 </html>
