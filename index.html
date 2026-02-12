@@ -3455,10 +3455,10 @@ function inicializarCalendarioSimple() {
 function seleccionarFecha(dateStr) {
     console.log("📅 Fecha seleccionada:", dateStr);
     
-    // 🔴 SOLO asignar cuando el usuario realmente hace clic
+    // SOLO asignar cuando el usuario realmente hace clic
     window.selectedDate = dateStr;
     
-    // 🔴 NUEVO: Limpiar registros de ofertas mostradas/rechazadas cuando cambia la fecha
+    // Limpiar registros de ofertas cuando cambia la fecha
     ofertaMostradaParaFechaHora = {};
     ofertaRechazadaParaFechaHora = {};
     
@@ -3497,18 +3497,27 @@ function seleccionarFecha(dateStr) {
         scheduleUpdateAvailableHours();
     }
     
-    // 🔴 NUEVO: Hacer scroll a horarios disponibles en móviles
+    // ========== SOLUCIÓN PARA SCROLL EN MÓVIL ==========
     setTimeout(() => {
-        const hoursContainer = document.querySelector('.hours-container');
-        if (hoursContainer && window.innerWidth <= 768) {
-            hoursContainer.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
+        if (window.innerWidth <= 768) {
+            const hoursContainer = document.querySelector('.hours-container');
+            if (hoursContainer) {
+                // Scroll suave al contenedor de horarios
+                hoursContainer.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' // 'start' lo lleva al principio del contenedor
+                });
+                
+                // Opcional: Añadir un pequeño highlight visual
+                hoursContainer.style.transition = 'box-shadow 0.5s ease';
+                hoursContainer.style.boxShadow = '0 0 0 3px rgba(212, 175, 55, 0.5)';
+                setTimeout(() => {
+                    hoursContainer.style.boxShadow = '';
+                }, 1000);
+            }
         }
-    }, 300);
+    }, 300); // Pequeño delay para que los horarios se carguen
     
-    // 🔴 NO verificar oferta aquí - solo cuando se seleccione la hora
     console.log("✅ Fecha seleccionada, esperando hora para mostrar oferta");
 }
 
@@ -3528,11 +3537,10 @@ function verificarScrollHorarios() {
 }
 
 // ========== MODIFICAR LA FUNCIÓN selectTime ==========
-// Función para seleccionar hora - AGREGAR ESTA FUNCIÓN
 function selectTime(timeStr) {
     console.log("🕐 selectTime llamado con:", timeStr);
-
-     // 🔴 NUEVO: Limpiar registros de ofertas cuando se cambia la hora
+    
+    // Limpiar registros de ofertas cuando se cambia la hora
     if (window.selectedTime !== timeStr) {
         console.log("🕐 Hora cambiada, limpiando registros de ofertas");
         ofertaMostradaParaFechaHora = {};
@@ -3545,10 +3553,10 @@ function selectTime(timeStr) {
         showNotification('⚠️ Las reservas son solo en horas en punto (ej: 11:00, 14:00)', 'info');
         return;
     }
-
-    // 🔴 SOLO asignar cuando el usuario realmente hace clic
+    
+    // SOLO asignar cuando el usuario realmente hace clic
     window.selectedTime = timeStr;
-
+    
     // Actualizar UI
     document.querySelectorAll('.hour-option').forEach(el => {
         el.classList.remove('selected');
@@ -3556,16 +3564,26 @@ function selectTime(timeStr) {
             el.classList.add('selected');
         }
     });
-
+    
     // Actualizar resumen
     updateReservationSummary();
-
-    // Scroll al formulario si ya hay fecha seleccionada
+    
+    // ========== SCROLL AL FORMULARIO EN MÓVIL ==========
     if (window.selectedDate) {
-        scrollToReservationForm();
+        setTimeout(() => {
+            if (window.innerWidth <= 768) {
+                const reservationSection = document.getElementById('reservation');
+                if (reservationSection) {
+                    reservationSection.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }
+            }
+        }, 300);
     }
     
-    // 🔴 IMPORTANTE: Solo mostrar oferta cuando hay fecha Y hora
+    // Verificar oferta después de seleccionar hora
     setTimeout(() => {
         verificarYMostrarOferta();
     }, 100);
