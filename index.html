@@ -7014,9 +7014,68 @@ function scrollToReservationForm() {
         }
 // Esta función ahora llama a la nueva función mejorada
     scrollToReservationTitle();
+    scrollReservaUltraPreciso();
 
 
     }, 300); // Pequeño delay para mejor UX
+}
+
+// ========== SOLUCIÓN ULTRA DEFINITIVA PARA SCROLL ==========
+function scrollReservaUltraPreciso() {
+    if (window.innerWidth > 768) return;
+    
+    console.log("🎯 Ejecutando scroll ULTRA preciso");
+    
+    // Esperar a que el DOM esté completamente actualizado
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            const reservationSection = document.getElementById('reservation');
+            if (!reservationSection) return;
+            
+            // Calcular posición exacta
+            const rect = reservationSection.getBoundingClientRect();
+            const absoluteTop = window.pageYOffset + rect.top;
+            
+            // Obtener altura de la ventana
+            const windowHeight = window.innerHeight;
+            
+            // Calcular posición para que el título quede centrado
+            const titleElement = reservationSection.querySelector('.section-title');
+            let targetPosition;
+            
+            if (titleElement) {
+                const titleRect = titleElement.getBoundingClientRect();
+                const titleTop = window.pageYOffset + titleRect.top;
+                
+                // Posicionar el título a 1/3 de la pantalla desde arriba
+                targetPosition = titleTop - (windowHeight / 4);
+            } else {
+                // Fallback: posicionar la sección a 80px del top
+                targetPosition = absoluteTop - 80;
+            }
+            
+            // Forzar scroll
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+            
+            console.log(`📍 Scroll forzado a posición: ${targetPosition}px`);
+            
+            // Verificar y corregir si es necesario
+            setTimeout(() => {
+                const currentScroll = window.scrollY;
+                if (Math.abs(currentScroll - targetPosition) > 50) {
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'auto' // Sin animación para corrección
+                    });
+                    console.log("🔄 Scroll corregido");
+                }
+            }, 500);
+            
+        }, 300);
+    });
 }
 
 // ========== FUNCIONES PARA LEER MÁS/MENOS ==========
