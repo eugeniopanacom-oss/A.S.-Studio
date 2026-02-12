@@ -5530,11 +5530,16 @@ async function updateAvailableHours() {
             </div>
         `;
     }
-    
 if (window.selectedDate && window.innerWidth <= 768) {
     setTimeout(() => {
-        scrollHorariosMobile();
-    }, 100);
+        const hoursContainer = document.querySelector('.hours-container');
+        if (hoursContainer) {
+            window.scrollTo({
+                top: hoursContainer.offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+    }, 150);
 }
 }
 
