@@ -3450,8 +3450,61 @@ function inicializarCalendarioSimple() {
     // Renderizar por primera vez
     renderizarCalendarioCompleto();
 }
+// ========== SOLUCIÓN DEFINITIVA - SCROLL AL PRINCIPIO DE HORARIOS ==========
+function scrollHorariosMobile() {
+    // SOLO para móviles
+    if (window.innerWidth > 768) return;
+    
+    console.log("📱 Scroll FORZADO al principio de horarios");
+    
+    const hoursContainer = document.querySelector('.hours-container');
+    if (!hoursContainer) return;
+    
+    // MÉTODO 1: scrollIntoView con TRUE (fuerza al principio)
+    hoursContainer.scrollIntoView(true);
+    
+    // MÉTODO 2: Ajuste fino con offset (por si acaso)
+    setTimeout(() => {
+        window.scrollTo({
+            top: hoursContainer.offsetTop - 20,
+            behavior: 'auto'
+        });
+    }, 50);
+    
+    console.log("✅ Scroll ejecutado");
+}
 
-// ========== FUNCIÓN seleccionarFecha OPTIMIZADA ==========
+// ========== VERSIÓN EXTREMA - USA ANCLA HTML ==========
+function scrollHorariosConAncla() {
+    if (window.innerWidth > 768) return;
+    
+    console.log("📱 Scroll con ANCLA");
+    
+    // Eliminar ancla anterior si existe
+    const anclaVieja = document.getElementById('ancla-horarios');
+    if (anclaVieja) anclaVieja.remove();
+    
+    // Crear nuevo ancla
+    const ancla = document.createElement('a');
+    ancla.id = 'ancla-horarios';
+    ancla.style.display = 'block';
+    ancla.style.position = 'relative';
+    ancla.style.top = '-20px';
+    ancla.style.visibility = 'hidden';
+    
+    // Insertar ancla ANTES del contenedor de horarios
+    const hoursContainer = document.querySelector('.hours-container');
+    if (hoursContainer) {
+        hoursContainer.parentNode.insertBefore(ancla, hoursContainer);
+        
+        // Scroll al ancla
+        location.hash = '#ancla-horarios';
+        
+        console.log("✅ Scroll con ancla ejecutado");
+    }
+}
+
+// ========== MODIFICAR LA FUNCIÓN seleccionarFecha ==========
 function seleccionarFecha(dateStr) {
     console.log("📅 Fecha seleccionada:", dateStr);
     
@@ -3485,12 +3538,29 @@ function seleccionarFecha(dateStr) {
         scheduleUpdateAvailableHours();
     }
     
-    // ========== SCROLL MÓVIL - SOLO UNA VEZ, SIN DELAY ==========
+    // ========== SCROLL MÓVIL - VERSIÓN CORREGIDA ==========
     if (window.innerWidth <= 768) {
-        // Scroll inmediato (sin esperar)
+        // PRIMER INTENTO: Inmediato
         setTimeout(() => {
-            scrollHorariosForzado(); // Usar la versión más rápida
-        }, 10);
+            const hoursContainer = document.querySelector('.hours-container');
+            if (hoursContainer) {
+                // scrollIntoView(true) SIEMPRE va al principio
+                hoursContainer.scrollIntoView(true);
+            }
+        }, 50);
+        
+        // SEGUNDO INTENTO: Con ancla HTML (100% efectivo)
+        setTimeout(() => {
+            scrollHorariosConAncla();
+        }, 300);
+        
+        // TERCER INTENTO: Backup
+        setTimeout(() => {
+            const hoursContainer = document.querySelector('.hours-container');
+            if (hoursContainer) {
+                window.scrollTo(0, hoursContainer.offsetTop - 20);
+            }
+        }, 600);
     }
     
     console.log("✅ Fecha seleccionada:", dateStr);
@@ -5523,10 +5593,19 @@ async function updateAvailableHours() {
             </div>
         `;
     }
-
-    if (window.selectedDate && window.innerWidth <= 768) {
-    // SIN SETTIMEOUT, ejecutar inmediatamente
-    scrollHorariosForzado();
+if (window.selectedDate && window.innerWidth <= 768) {
+    // Scroll inmediato
+    setTimeout(() => {
+        const hoursContainer = document.querySelector('.hours-container');
+        if (hoursContainer) {
+            hoursContainer.scrollIntoView(true);
+        }
+    }, 100);
+    
+    // También con ancla por seguridad
+    setTimeout(() => {
+        scrollHorariosConAncla();
+    }, 400);
 }
 }
 
@@ -7402,29 +7481,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ========== SOLUCIÓN ULTRA RÁPIDA - SIN ANIMACIONES ==========
-function scrollHorariosMobile() {
-    // SOLO para móviles
-    if (window.innerWidth > 768) return;
-    
-    console.log("📱 Scroll INSTANTÁNEO a horarios");
-    
-    const hoursContainer = document.querySelector('.hours-container');
-    if (!hoursContainer) return;
-    
-    // OBTENER POSICIÓN EXACTA
-    const rect = hoursContainer.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const targetPosition = rect.top + scrollTop - 20; // -20 para margen
-    
-    // SCROLL INSTANTÁNEO (sin smooth)
-    window.scrollTo({
-        top: targetPosition,
-        behavior: 'auto' // AUTO = instantáneo, SMOOTH = lento
-    });
-    
-    console.log(`✅ Scroll instantáneo a: ${targetPosition}px`);
-}
+
 
 // ========== VERSIÓN PARA CARGAR HORARIOS ==========
 function scrollHorariosForzado() {
