@@ -2661,6 +2661,8 @@ let lastUpdateTime = 0;
 const UPDATE_COOLDOWN = 1000;
 let ofertaMostradaParaFechaHora = {}; 
 let ofertaRechazadaParaFechaHora = {};
+let ofertasCache = []; 
+let ofertaTimeout = null;
 
 // Variables globales del calendario
 let currentMonth = 1; // Febrero
@@ -3228,6 +3230,14 @@ function showNotification(message, type = "info") {
                 eventListenersSet = true;
                 console.log("✅ Event listeners configurados una sola vez");
             }
+
+            // Cargar ofertas en caché para acceso instantáneo
+cargarOfertasAlInstante();
+
+// Limpiar estado de ofertas al iniciar
+window.ofertaMostradaParaFechaHora = {};
+window.ofertaRechazadaParaFechaHora = {};
+window.ofertaSeleccionada = false;
         }
 
         // ========== CONFIGURACIÓN FIREBASE ==========
@@ -4389,9 +4399,16 @@ function mostrarModalOfertaEspecifica(oferta) {
     console.log("✅ Modal mostrado");
     
     // 🔴 CRÍTICO: Configurar botones CORRECTAMENTE
-    const aceptarBtn = document.getElementById('aceptarOfertaBtn');
-    const cerrarBtn = document.getElementById('cerrarOfertaBtn');
-    
+const aceptarBtn = document.getElementById('aceptarOfertaBtn');
+if (aceptarBtn) {
+    aceptarBtn.onclick = aceptarOfertaFlash; // ← DIRECTA, SIN EVENT LISTENERS
+}
+
+const cerrarBtn = document.getElementById('cerrarOfertaBtn');
+if (cerrarBtn) {
+    cerrarBtn.onclick = cerrarOfertaFlash; // ← DIRECTA, SIN EVENT LISTENERS
+}
+
     // Remover eventos anteriores para evitar múltiples listeners
     if (aceptarBtn) {
         const nuevoAceptarBtn = aceptarBtn.cloneNode(true);
@@ -6730,18 +6747,15 @@ function mostrarModalOferta() {
     ofertaModal.style.display = 'flex';
     
     // Configurar botones
-    const aceptarBtn = document.getElementById('aceptarOfertaBtn');
-    const cerrarBtn = document.getElementById('cerrarOfertaBtn');
-    
-    if (aceptarBtn) {
-        aceptarBtn.onclick = function() {
-            aceptarOfertaEspecial(oferta);
-        };
-    }
-    
-    if (cerrarBtn) {
-        cerrarBtn.onclick = cerrarOferta;
-    }
+const aceptarBtn = document.getElementById('aceptarOfertaBtn');
+if (aceptarBtn) {
+    aceptarBtn.onclick = aceptarOfertaFlash; // ← DIRECTA, SIN EVENT LISTENERS
+}
+
+const cerrarBtn = document.getElementById('cerrarOfertaBtn');
+if (cerrarBtn) {
+    cerrarBtn.onclick = cerrarOfertaFlash; // ← DIRECTA, SIN EVENT LISTENERS
+}
 }
 
 // Función para aceptar la oferta
