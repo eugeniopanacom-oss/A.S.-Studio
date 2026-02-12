@@ -2791,6 +2791,39 @@
         scroll-margin-top: 80px;
     }
 }
+
+/* ========== SOLUCIÓN RADICAL PARA SCROLL EN MÓVIL ========== */
+@media (max-width: 768px) {
+    /* Resetear comportamiento de scroll */
+    html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 70px; /* Espacio para el header sticky */
+    }
+    
+    /* Asegurar que el título sea el punto de referencia */
+    #reservation .section-title {
+        scroll-margin-top: 70px;
+    }
+    
+    /* El contenedor de horas ya no necesita scroll-margin */
+    .hours-container {
+        scroll-margin-top: 0;
+    }
+    
+    .hours-container h3 {
+        scroll-margin-top: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        scroll-padding-top: 60px;
+    }
+    
+    #reservation .section-title {
+        scroll-margin-top: 60px;
+    }
+}
     </style>
 <body>
     <!-- Header con logo -->
@@ -3516,7 +3549,7 @@ function inicializarCalendarioSimple() {
 }
 
 // ========== MODIFICAR LA FUNCIÓN seleccionarFecha ==========
-// ========== FUNCIÓN DE SELECCIÓN DE FECHA CON SCROLL PRECISO ==========
+// ========== SOLUCIÓN DEFINITIVA DE SCROLL PARA MÓVIL ==========
 function seleccionarFecha(dateStr) {
     console.log("📅 Fecha seleccionada:", dateStr);
     
@@ -3560,57 +3593,48 @@ function seleccionarFecha(dateStr) {
     setTimeout(() => {
         // SOLO en dispositivos móviles
         if (window.innerWidth <= 768) {
-            const hoursContainer = document.querySelector('.hours-container');
             
-            if (hoursContainer) {
-                // Buscar el ENCABEZADO (título) del contenedor de horarios
-                const hoursHeader = hoursContainer.querySelector('h3');
+            // BUSCAR EL TÍTULO "Reserva tu Turno"
+            const reservationTitle = document.querySelector('#reservation .section-title');
+            
+            if (reservationTitle) {
+                // Obtener la posición del título
+                const titlePosition = reservationTitle.getBoundingClientRect().top + window.pageYOffset;
                 
-                if (hoursHeader) {
-                    // Calcular posición perfecta para ver el título
-                    const headerPosition = hoursHeader.getBoundingClientRect().top + window.pageYOffset;
-                    const viewportHeight = window.innerHeight;
-                    
-                    // Ajustar para que el título quede a 1/3 de la pantalla
-                    // Esto permite ver el título y parte del formulario superior
-                    const targetPosition = headerPosition - (viewportHeight * 0.15);
-                    
-                    window.scrollTo({
-                        top: Math.max(0, targetPosition),
-                        behavior: 'smooth'
-                    });
-                    
-                    console.log("✅ Scroll preciso al encabezado de horarios");
-                } else {
-                    // Fallback: scroll al contenedor con offset
-                    const yOffset = -30;
-                    const y = hoursContainer.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                    window.scrollTo({ 
-                        top: y, 
-                        behavior: 'smooth' 
+                // Calcular offset para que el título quede justo debajo del header
+                const headerHeight = document.querySelector('header')?.offsetHeight || 70;
+                const targetPosition = titlePosition - headerHeight - 10;
+                
+                // Scroll suave al título
+                window.scrollTo({
+                    top: Math.max(0, targetPosition),
+                    behavior: 'smooth'
+                });
+                
+                console.log("✅ Scroll al título 'Reserva tu Turno'");
+                
+                // Opcional: Resaltar el título brevemente
+                reservationTitle.style.transition = 'color 0.3s ease, text-shadow 0.3s ease';
+                reservationTitle.style.color = '#d4af37';
+                reservationTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.7)';
+                
+                setTimeout(() => {
+                    reservationTitle.style.color = '';
+                    reservationTitle.style.textShadow = '';
+                }, 1000);
+                
+            } else {
+                // Fallback: si no encuentra el título, ir al contenedor de horas
+                const hoursContainer = document.querySelector('.hours-container');
+                if (hoursContainer) {
+                    hoursContainer.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
                     });
                 }
             }
-            
-            // Verificar si el formulario de reserva es visible
-            setTimeout(() => {
-                const reservationSection = document.getElementById('reservation');
-                const reservationTitle = reservationSection?.querySelector('.section-title');
-                
-                // Si el título de reserva no es visible, ajustar un poco más
-                if (reservationTitle) {
-                    const rect = reservationTitle.getBoundingClientRect();
-                    if (rect.top < 0 || rect.top > window.innerHeight) {
-                        // Scroll suave hacia el formulario
-                        reservationTitle.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center' 
-                        });
-                    }
-                }
-            }, 400);
         }
-    }, 350); // Pequeño delay para que se rendericen los horarios
+    }, 400); // Delay suficiente para que se rendericen los horarios
 }
 
 // Agrega esta función para verificar si se necesita scroll
@@ -7541,29 +7565,27 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ========== FUNCIÓN DE RESPALDO PARA SCROLL EN MÓVIL ==========
-// Esta función se ejecuta cuando la página se carga y cuando cambia el tamaño
+// ========== FUNCIÓN DE RESPALDO PARA SCROLL EN MÓVIL ==========
 function ajustarScrollMovil() {
     // Solo en móvil
     if (window.innerWidth > 768) return;
     
-    // Si hay una fecha seleccionada, ajustar scroll
+    // Si hay una fecha seleccionada, ajustar scroll al título
     if (window.selectedDate) {
-        const hoursContainer = document.querySelector('.hours-container');
-        if (hoursContainer) {
-            const hoursHeader = hoursContainer.querySelector('h3');
-            if (hoursHeader) {
-                setTimeout(() => {
-                    const headerPosition = hoursHeader.getBoundingClientRect().top + window.pageYOffset;
-                    const viewportHeight = window.innerHeight;
-                    const targetPosition = headerPosition - (viewportHeight * 0.15);
-                    
-                    window.scrollTo({
-                        top: Math.max(0, targetPosition),
-                        behavior: 'smooth'
-                    });
-                }, 100);
+        setTimeout(() => {
+            const reservationTitle = document.querySelector('#reservation .section-title');
+            
+            if (reservationTitle) {
+                const titlePosition = reservationTitle.getBoundingClientRect().top + window.pageYOffset;
+                const headerHeight = document.querySelector('header')?.offsetHeight || 70;
+                const targetPosition = titlePosition - headerHeight - 10;
+                
+                window.scrollTo({
+                    top: Math.max(0, targetPosition),
+                    behavior: 'smooth'
+                });
             }
-        }
+        }, 200);
     }
 }
 
