@@ -3661,51 +3661,25 @@ function selectTime(timeStr) {
     updateReservationSummary();
 
     // 🔴 🔴 🔴 SOLUCIÓN DEFINITIVA - SCROLL PERFECTO EN MÓVIL 🔴 🔴 🔴
-    if (window.selectedDate && window.innerWidth <= 768) {
-        setTimeout(() => {
-            const reservationSection = document.getElementById('reservation');
-            if (reservationSection) {
-                
-                // Buscar el TÍTULO de la sección
-                const sectionTitle = reservationSection.querySelector('.section-title');
-                
-                if (sectionTitle) {
-                    // Obtener la posición del título
-                    const titlePosition = sectionTitle.getBoundingClientRect().top + window.pageYOffset;
-                    
-                    // Altura del header fijo (ajusta según tu header)
-                    const headerHeight = 80;
-                    
-                    // Calcular posición para que el título quede DEBAJO del header
-                    const targetPosition = titlePosition - headerHeight - 10; // 10px de margen extra
-                    
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                    
-                    console.log(`📍 Scroll perfecto - Título visible justo debajo del header`);
-                    
-                    // Efecto visual de resaltado
-                    sectionTitle.style.transition = 'color 0.3s ease, text-shadow 0.3s ease';
-                    sectionTitle.style.color = 'var(--primary)';
-                    sectionTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.5)';
-                    
-                    setTimeout(() => {
-                        sectionTitle.style.color = '';
-                        sectionTitle.style.textShadow = '';
-                    }, 1500);
-                }
-            }
-        }, 350);
-    }
-    
-    // Mostrar oferta si corresponde
+    // VERSIÓN ULTRA SIMPLE - Garantizada
+if (window.selectedDate && window.innerWidth <= 768) {
     setTimeout(() => {
-        verificarYMostrarOferta();
-    }, 100);
-    
-    console.log("⏰ Hora seleccionada:", timeStr);
+        const sectionTitle = document.querySelector('#reservation .section-title');
+        if (sectionTitle) {
+            // Calcular posición para que el título quede a 20px del header
+            const rect = sectionTitle.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const targetPosition = rect.top + scrollTop - 80; // 80px debajo del header
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+            
+            console.log(`🎯 Scroll ULTRA SIMPLE a: ${targetPosition}px`);
+        }
+    }, 400);
+}
 }
 
 // ========== AGREGAR LIMPIEZA DEL FORMULARIO ==========
@@ -5635,7 +5609,6 @@ async function updateAvailableHours() {
             `;
         }
         
-        // --- 9. MOSTRAR RESULTADO ---
           // --- 9. MOSTRAR RESULTADO ---
     if (hayHorariosDisponibles) {
         hoursList.innerHTML = hoursHTML;
