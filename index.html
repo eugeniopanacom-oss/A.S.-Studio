@@ -3497,28 +3497,10 @@ function seleccionarFecha(dateStr) {
         scheduleUpdateAvailableHours();
     }
     
-    // ========== SOLUCIÓN PARA SCROLL EN MÓVIL ==========
-    setTimeout(() => {
-        if (window.innerWidth <= 768) {
-            const hoursContainer = document.querySelector('.hours-container');
-            if (hoursContainer) {
-                // Scroll suave al contenedor de horarios
-                hoursContainer.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' // 'start' lo lleva al principio del contenedor
-                });
-                
-                // Opcional: Añadir un pequeño highlight visual
-                hoursContainer.style.transition = 'box-shadow 0.5s ease';
-                hoursContainer.style.boxShadow = '0 0 0 3px rgba(212, 175, 55, 0.5)';
-                setTimeout(() => {
-                    hoursContainer.style.boxShadow = '';
-                }, 1000);
-            }
-        }
-    }, 300); // Pequeño delay para que los horarios se carguen
+    // ========== LLAMAR AL SCROLL MÓVIL ==========
+    scrollHorariosMobile();
     
-    console.log("✅ Fecha seleccionada, esperando hora para mostrar oferta");
+    console.log("✅ Fecha seleccionada:", dateStr);
 }
 
 // Agrega esta función para verificar si se necesita scroll
@@ -5548,7 +5530,14 @@ async function updateAvailableHours() {
             </div>
         `;
     }
+    
+if (window.selectedDate && window.innerWidth <= 768) {
+    setTimeout(() => {
+        scrollHorariosMobile();
+    }, 100);
 }
+}
+
 
 // Función auxiliar
 function obtenerNombreDia(dia) {
@@ -7420,5 +7409,29 @@ document.addEventListener('DOMContentLoaded', function() {
         instagramLink.title = "Se abrirá en la aplicación de Instagram. Búscame como @alexis.sebastiann";
     }
 });
+
+// ========== SOLUCIÓN DIRECTA PARA SCROLL EN MÓVIL ==========
+function scrollHorariosMobile() {
+    // SOLO para móviles
+    if (window.innerWidth > 768) return;
+    
+    console.log("📱 Scroll forzado a horarios en móvil");
+    
+    // Esperar a que los horarios se carguen
+    setTimeout(() => {
+        const hoursContainer = document.querySelector('.hours-container');
+        const hoursList = document.getElementById('hoursList');
+        
+        if (hoursContainer && hoursList) {
+            // FORZAR scroll al principio del contenedor
+            window.scrollTo({
+                top: hoursContainer.offsetTop - 20, // -20 para darle un pequeño margen
+                behavior: 'smooth'
+            });
+            
+            console.log("✅ Scroll ejecutado a posición:", hoursContainer.offsetTop);
+        }
+    }, 400); // Esperar 400ms para que los horarios se generen
+}
     </script>
 </html>
