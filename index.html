@@ -3641,41 +3641,30 @@ function selectTime(timeStr) {
     updateReservationSummary();
 
     // 🔴 🔴 🔴 SOLUCIÓN DEL SCROLL - MÓVIL SOLAMENTE 🔴 🔴 🔴
-    if (window.selectedDate && window.innerWidth <= 768) {
-        setTimeout(() => {
-            const reservationSection = document.getElementById('reservation');
-            if (reservationSection) {
+   // SOLUCIÓN ULTRA SIMPLE - PEGAR EN selectTime()
+if (window.selectedDate && window.innerWidth <= 768) {
+    setTimeout(() => {
+        const reservationSection = document.getElementById('reservation');
+        if (reservationSection) {
+            // FORZAR scroll a la posición exacta del TÍTULO
+            const sectionTitle = reservationSection.querySelector('.section-title');
+            
+            if (sectionTitle) {
+                // Calcular posición para que el título quede centrado
+                const titlePosition = sectionTitle.getBoundingClientRect().top + window.pageYOffset;
+                const viewportHeight = window.innerHeight;
+                const offset = viewportHeight / 4; // Ajuste fino
                 
-                // OPCIÓN 1: Scroll al TÍTULO de la sección (recomendada)
-                const sectionTitle = reservationSection.querySelector('.section-title');
-                if (sectionTitle) {
-                    sectionTitle.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' // Centra el título en la pantalla
-                    });
-                    console.log("✅ Scroll ajustado al TÍTULO de Reserva tu Turno");
-                } 
-                // OPCIÓN 2: Scroll al formulario con offset preciso
-                else {
-                    const yOffset = -20; // Margen superior
-                    const y = reservationSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                    window.scrollTo({ 
-                        top: y, 
-                        behavior: 'smooth' 
-                    });
-                }
+                window.scrollTo({
+                    top: titlePosition - offset,
+                    behavior: 'smooth'
+                });
                 
-                // Efecto visual de resaltado
-                reservationSection.style.transition = 'box-shadow 0.3s ease, border 0.3s ease';
-                reservationSection.style.boxShadow = '0 0 25px rgba(212, 175, 55, 0.6)';
-                reservationSection.style.borderRadius = '8px';
-                
-                setTimeout(() => {
-                    reservationSection.style.boxShadow = '';
-                }, 1500);
+                console.log(`📍 Scroll forzado a posición: ${titlePosition - offset}px`);
             }
-        }, 350); // Delay para que se actualice el resumen
-    }
+        }
+    }, 400);
+}
     
     // Mostrar oferta si corresponde
     setTimeout(() => {
