@@ -3620,7 +3620,6 @@ function verificarScrollHorarios() {
     }
 }
 
-// ========== FUNCIÓN CORREGIDA PARA SCROLL PERFECTO AL FORMULARIO ==========
 // ========== FUNCIÓN CORREGIDA - MUESTRA EL TÍTULO COMPLETO ==========
 function selectTime(timeStr) {
     console.log("🕐 selectTime llamado con:", timeStr);
@@ -3653,53 +3652,36 @@ function selectTime(timeStr) {
     // Actualizar resumen
     updateReservationSummary();
 
-    // 🔴 🔴 🔴 SOLUCIÓN DEL SCROLL - MUESTRA EL TÍTULO COMPLETO 🔴 🔴 🔴
-    if (window.selectedDate && window.innerWidth <= 768) {
-        setTimeout(() => {
-            const reservationSection = document.getElementById('reservation');
-            if (reservationSection) {
-                
-                // BUSCAR EL TÍTULO "Reserva tu Turno"
-                const sectionTitle = reservationSection.querySelector('.section-title');
-                
-                if (sectionTitle) {
-                    // CALCULAR POSICIÓN PARA QUE EL TÍTULO QUEDE VISIBLE
-                    const titleRect = sectionTitle.getBoundingClientRect();
-                    const titleTop = titleRect.top + window.pageYOffset;
-                    
-                    // OFFSET NEGATIVO PARA SUBIR UN POCO Y VER EL TÍTULO COMPLETO
-                    const offset = 80; // Espacio superior para que no quede pegado al borde
-                    
-                    window.scrollTo({
-                        top: titleTop - offset,
-                        behavior: 'smooth'
-                    });
-                    
-                    console.log(`✅ Scroll ajustado: Título "Reserva tu Turno" visible en posición ${titleTop - offset}px`);
-                    
-                    // RESALTAR EL TÍTULO
-                    sectionTitle.style.transition = 'all 0.3s ease';
-                    sectionTitle.style.color = 'var(--primary)';
-                    sectionTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.7)';
-                    sectionTitle.style.transform = 'scale(1.02)';
-                    
-                    setTimeout(() => {
-                        sectionTitle.style.textShadow = '';
-                        sectionTitle.style.transform = '';
-                    }, 1000);
-                    
-                } else {
-                    // FALLBACK: Si no encuentra el título, usar offset manual
-                    const yOffset = -20;
-                    const y = reservationSection.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                    window.scrollTo({ 
-                        top: y, 
-                        behavior: 'smooth' 
-                    });
-                }
-            }
-        }, 350); // Delay para que se actualice el resumen
-    }
+    // PEGAR ESTO DIRECTAMENTE EN selectTime() - SOLUCIÓN INFALIBLE
+if (window.selectedDate && window.innerWidth <= 768) {
+    setTimeout(() => {
+        const sectionTitle = document.querySelector('#reservation .section-title');
+        
+        if (sectionTitle) {
+            // Obtener la posición del título
+            const rect = sectionTitle.getBoundingClientRect();
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // POSICIÓN: 80px ANTES del título para que se vea completo
+            const targetPosition = rect.top + scrollTop - 80;
+            
+            window.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+            
+            // RESALTAR EL TÍTULO
+            sectionTitle.style.color = 'var(--primary)';
+            sectionTitle.style.textShadow = '0 0 15px rgba(212, 175, 55, 0.7)';
+            
+            setTimeout(() => {
+                sectionTitle.style.textShadow = '';
+            }, 1500);
+            
+            console.log(`📍 Scroll forzado a posición: ${targetPosition}px (título visible)`);
+        }
+    }, 400);
+}
     
     // Mostrar oferta si corresponde
     setTimeout(() => {
