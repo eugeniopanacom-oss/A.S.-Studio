@@ -2574,6 +2574,86 @@
         font-size: 1.8rem !important;
     }
 }
+
+/* ========== SOLO MÓVIL - ARREGLAR BOTÓN CERRAR ========== */
+@media (max-width: 768px) {
+    .close-confirm {
+        background: linear-gradient(135deg, #ff4444, #cc0000) !important;
+        color: white !important;
+        border: 2px solid #ff4444 !important;
+        box-shadow: 
+            0 0 15px rgba(255, 68, 68, 0.5),
+            0 0 30px rgba(255, 68, 68, 0.3),
+            inset 0 0 10px rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .close-confirm::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #ff4444, #cc0000, #ff4444);
+        z-index: -1;
+        border-radius: 12px;
+        opacity: 0.8;
+        animation: closeGlow 2s infinite alternate;
+    }
+    
+    .close-confirm:hover {
+        background: linear-gradient(135deg, #cc3333, #990000) !important;
+        transform: translateY(-2px) scale(1.01);
+        box-shadow: 
+            0 0 20px rgba(255, 68, 68, 0.7),
+            0 0 40px rgba(255, 68, 68, 0.5),
+            inset 0 0 15px rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    .whatsapp-confirm {
+        box-shadow: 
+            0 0 15px rgba(37, 211, 102, 0.5),
+            0 0 30px rgba(37, 211, 102, 0.3),
+            inset 0 0 10px rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .whatsapp-confirm::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, #25D366, #128C7E, #25D366);
+        z-index: -1;
+        border-radius: 12px;
+        opacity: 0.8;
+        animation: whatsappGlow 2s infinite alternate;
+    }
+}
+
+/* Animaciones para móvil */
+@keyframes closeGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+        opacity: 0.7;
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(255, 68, 68, 0.8);
+        opacity: 1;
+    }
+}
+
+@keyframes whatsappGlow {
+    0% {
+        box-shadow: 0 0 10px rgba(37, 211, 102, 0.5);
+        opacity: 0.7;
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(37, 211, 102, 0.8);
+        opacity: 1;
+    }
+}
     </style>
 <body>
     <!-- Header con logo -->
