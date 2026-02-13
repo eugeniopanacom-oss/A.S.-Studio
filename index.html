@@ -2817,8 +2817,7 @@
             <!-- Sección de bienvenida -->
             <section class="welcome">
                 <h2>Bienvenido a A.S. Studio</h2>
-                <p>Experimenta el arte de la barbería tradicional con un toque moderno. Reserva tu turno para recibir un
-                    servicio personalizado de la más alta calidad.</p>
+                <p>Mas que un servicio, es una atención hecha a tu medida. Desarrollaremos tu look con técnicas depuradas y un enfoque completamente personal. Agenda tu cita.</p>
                 <button class="btn" id="goToReservationBtn">
                     <i class="fas fa-calendar-alt"></i> Reservar Turno
                 </button>
@@ -2908,8 +2907,8 @@
        <i class="fab fa-instagram"></i> @alexis.sebastiann
     </a>
                         <div class="barbero-description">
-                            <p><strong>Alexis</strong>, tu barbero profesional.</p>
-                            <p>"Cada corte es una obra de arte. Espero tu visita para crear el estilo perfecto para ti."
+                            <p><strong>"Hola, soy Alexis.</strong> Mi trabajo es</p>
+                            <p>entender lo que buscas y transformarlo en un corte impecable. Te espero para crear juntos, tu estilo perfecto."
                             </p>
                         </div>
                     </div>
@@ -2967,8 +2966,7 @@
                         </div>
                         <div class="info-card" style="margin-top: 20px;">
                             <h3><i class="fas fa-info-circle"></i> Importante</h3>
-                            <p>No se pueden reservar dos turnos en el mismo día y horario. Cada cita tiene una duración
-                                aproximada de 30-45 minutos.</p>
+                            <p>Para antenderlo mejor, cada cita se programa en un horario exclusivo. Reserve su turno de 1 hora en un espacio desocupado.</p>
                         </div>
                     </div>
                 </div>
@@ -3014,8 +3012,7 @@
 
                     <div class="form-group">
                         <p style="color: #aaa; font-size: 0.9rem; margin-top: 20px;">
-                            * Al confirmar la reserva, deberás enviar un mensaje al barbero por WhatsApp para confirmar
-                            tu turno.
+                            *Al confirmar la reserva, podrás revisar los detalles del turno y, si lo deseas, enviar un mensaje al barbero por WhatsApp.
                         </p>
                     </div>
 
@@ -3061,7 +3058,7 @@
             </div>
 
             <div class="confirmation-note">
-                El barbero se contactará para confirmar la disponibilidad.
+                ¡Turno reservado! Ya puedes ver los detalles y, si querés, mandarle un WhatsApp al barbero para confirmar.
             </div>
 
             <div class="confirmation-actions">
@@ -5550,9 +5547,8 @@ async function updateAvailableHours() {
 
         // 🔴 INFO DE CONFIGURACIÓN EN CABECERA
         hoursHTML += `<p style="color: #aaa; font-size: 0.8rem; margin-bottom: 10px; text-align: center;">
-            <i class="fas fa-cog"></i> Configuración: ${fuenteConfiguracion}<br>
-            Horario: ${horaInicio}:00 a ${horaFin}:00
-        </p>`;
+    <i class="fas fa-clock"></i> Horario: ${horaInicio}:00 a ${horaFin}:00
+</p>`;
         
         for (let hour = horaInicio; hour <= horaFin; hour++) {
             // SOLO HORAS EN PUNTO
@@ -6600,7 +6596,7 @@ function showNotification(message, type = "info", duration = 5000) {
                 actualizarCampo('newModalPrice', `$${precio.toLocaleString('es-AR')}`);
 
                 // Configurar botón de WhatsApp
-                const mensajeWhatsapp = `Hola Alexis, soy ${nombre}. Quiero confirmar mi reserva en A.S. Studio:%0A%0A📅 Fecha: ${fechaBonita}%0A⏰ Hora: ${hora}%0A✂️ Servicio: ${servicio}%0A💰 Total: $${precio.toLocaleString('es-AR')}%0A%0AMi WhatsApp: ${whatsapp}%0A%0A¿Está disponible este horario?`;
+                const mensajeWhatsapp = `Hola Alexis, soy ${nombre}. Quiero confirmar mi reserva en A.S. Studio:%0A%0A📅 Fecha: ${fechaBonita}%0A⏰ Hora: ${hora}%0A✂️ Servicio: ${servicio}%0A💰 Total: $${precio.toLocaleString('es-AR')}%0A%0AMi WhatsApp: ${whatsapp}%0A%0AConfirmo mi asistencia. Si no puedo ir, aviso.`;
 
                 const whatsappBtn = document.getElementById('newWhatsappConfirmBtn');
                 if (whatsappBtn) {
